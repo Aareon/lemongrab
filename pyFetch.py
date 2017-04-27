@@ -10,8 +10,9 @@ from screeninfo import get_monitors
 from multiprocessing.pool import ThreadPool
 from uptime import uptime
 
+
 def humanbytes(B):
-   'Return the given bytes as a human friendly KB, MB, GB, or TB string'
+   """Return the given bytes as a human friendly KB, MB, GB, or TB string"""
    B = float(B)
    KB = float(1024)
    MB = float(KB ** 2) # 1,048,576
@@ -29,6 +30,7 @@ def humanbytes(B):
    elif TB <= B:
       return '{0:.2f} TB'.format(B/TB)
 
+
 def ddhhmmss(seconds):
     day = seconds // (24 * 3600)
     seconds = seconds % (24 * 3600)
@@ -37,21 +39,25 @@ def ddhhmmss(seconds):
     minute = seconds // 60
     return "%d days %d hours %d minutes" % (day, hour, minute)
 
+
 def linux():
     import distro
-    linux = True
     distro_info = distro.linux_distribution()
     dist_name = distro_info[2].split(' ')[0]
-    return f'{distro_info[0]} {distro_info[1]} {dist_name}'
+    return '{} {} {}'.format(distro_info[0], distro_info[1], dist_name)
+
 
 def get_uname():
     return platform.uname()
 
+
 def get_user():
     return getpass.getuser()
 
+
 def get_uptime():
     return ddhhmmss(int(uptime()))
+
 
 def get_cpu():
     cpu = cpuinfo.get_cpu_info()
@@ -59,19 +65,24 @@ def get_cpu():
     hz = cpu['hz_actual']
     return brand, hz
 
+
 def get_mem():
     mem = psutil.virtual_memory()
     return humanbytes(mem.total), humanbytes(mem.used)
 
+
 def get_packages():
     return subprocess.run("dpkg -l | grep -c '^ii'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
+
 
 def get_shell():
     return subprocess.run("$SHELL --version", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n').split('(')[0]
 
+
 def get_disk():
     disk = psutil.disk_usage(".")
     return humanbytes(disk.free), humanbytes(disk.total)
+
 
 def get_screen():
     try:
@@ -79,6 +90,7 @@ def get_screen():
         return screen
     except:
         return None
+
 
 def get_motherboard(os):
     if os == 'linux':
@@ -90,30 +102,31 @@ def get_motherboard(os):
         name = subprocess.run("wmic baseboard get product", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n\t').split('\n')[2].rstrip()
     return manufacturer, name
 
+
 def get_specs(username, uname, mem_total, mem_used, cpu_brand, cpu_hz, disk_free, disk_total, screen, motherboard_vendor, motherboard_name, packages=None, shell_version=None):
     specs = []
-    specs.append(f'{username}@{uname.node}')
+    specs.append('{}@{}'.format(username, uname.node))
 
     if 'linux' in uname.system.lower():
-        specs.append(f'OS: {system}')
-        specs.append(f'Kernel: {uname.machine} Linux {uname.release}')
+        specs.append('OS: {}'.format(system))
+        specs.append('Kernel: {} Linux {}'.format(uname.machine, uname.release))
     else:
-        specs.append(f'OS: {uname.system} {uname.release}')
-    specs.append(f'Uptime: {uptime}')
+        specs.append('OS: {} {}'.format(uname.system, uname.release))
+    specs.append('Uptime: {}'.format(uptime))
 
     if 'linux' in uname.system.lower():
-        specs.append(f'Packages: {packages}')
-        specs.append(f'Shell: {shell_version}')
+        specs.append('Packages: {}'.format(packages))
+        specs.append('Shell: {}'.format(shell_version))
 
-    specs.append(f'HDD: {disk_free} / {disk_total} (Free/Total)')
+    specs.append('HDD: {} / {} (Free/Total)'.format(disk_free, disk_total))
 
-    specs.append(f'CPU: {cpu_brand} @ {cpu_hz}')
-    specs.append(f'RAM: {mem_used} / {mem_total} (Used/Total)')
+    specs.append('CPU: {} @ {}'.format(cpu_brand, cpu_hz))
+    specs.append('RAM: {} / {} (Used/Total)'.format(mem_used, mem_total))
 
     if screen:
-        specs.append(f'Resolution: {screen}')
+        specs.append('Resolution: {}'.format(screen))
 
-    specs.append(f'Motherboard: {motherboard_vendor} {motherboard_name}')
+    specs.append('Motherboard: {} {}'.format(motherboard_vendor, motherboard_name))
 
     for item in specs:
         print(item)
