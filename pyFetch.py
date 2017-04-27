@@ -259,4 +259,4 @@ class Computer:
 
 if __name__ == '__main__':
     make_logo = LogoMaker()
-    make_logo.display('mint')
+    make_logo.display()
