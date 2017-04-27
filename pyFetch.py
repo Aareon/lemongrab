@@ -178,7 +178,7 @@ class LogoMaker:
               print(f"{self.lg}     NMm  {self.w}dMM  .mmd  `mmm   yMM. {self.lg}dMM  {self.screen}\n"
                     f"{self.lg}     NMm  {self.w}dMM`  ..`   ...   ydm. {self.lg}dMM  {self.motherboard}")
         else:
-            print(f"{self.lg}     NMm  {self.w}dMM  .mmd  `mmm   yMM. {self.lg}dMM  {self.motherboard}"
+            print(f"{self.lg}     NMm  {self.w}dMM  .mmd  `mmm   yMM. {self.lg}dMM  {self.motherboard}\n"
                   f"{self.lg}     NMm  {self.w}dMM`  ..`   ...   ydm. {self.lg}dMM  ")
 
         print(f"{self.lg}     hMM- {self.w}+MMd/-------...-:sdds  {self.lg}dMM  \n"
@@ -187,7 +187,7 @@ class LogoMaker:
               f"{self.lg}       `/dMNmy+/:-------------:/yMMM  \n"
               f"{self.lg}          ./ydNMMMMMMMMMMMMMMMMMMMMM  \n"
               f"{self.lg}             \.MMMMMMMMMMMMMMMMMMM    \n"
-              f"{self.lg}                                      ")
+              f"{self.lg}                                      {self.xx}")
         
     def n_a(self):
         print(
