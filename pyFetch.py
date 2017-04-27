@@ -50,11 +50,7 @@ class LogoMaker:
         self.kernel = f'{self.lr}Kernel: {self.xx}{self.computer.uname.machine}'
         
         if 'linux' in self.computer.uname.system.lower():
-            import distro
-            distribution = ''
-            for item in distro.linux_distribution():
-                distribution += ' ' + item
-            self.os = f'{self.lr}OS: {self.xx}{distribution}'
+            self.os = f'{self.lr}OS: {self.xx}{self.computer.os}'
             self.kernel = f'{self.lr}Kernel: {self.xx}{self.computer.uname.machine} Linux {self.computer.uname.release}'
         else:
             self.os = f'{self.lr}OS: {self.xx}{self.computer.uname.system} {self.computer.uname.release}'
@@ -180,8 +176,12 @@ class Computer:
         self.disk_total = humanbytes(disk.total)
         self.screen = self.get_screen()
 
-        if 'ubuntu' in self.uname.version.lower():
-            self.os = 'ubuntu'
+        if 'linux' in self.uname.system.lower():
+            import distro
+            distribution = ''
+            for item in distro.linux_distribution():
+                distribution += ' ' + item
+                self.os = distribution
         elif 'windows' in self.uname.system.lower():
             if '10' or '8' in self.uname.release:
                 self.os = '10/8'
@@ -189,6 +189,7 @@ class Computer:
                 self.os = 'win'
         else:
             self.os = 'nothing'
+
 
         system_lower = self.uname.system.lower()
 
