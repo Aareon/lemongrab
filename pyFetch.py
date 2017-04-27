@@ -3,6 +3,7 @@ import getpass
 import subprocess
 import cpuinfo
 import psutil
+from multiprocessing.pool import ThreadPool
 from screeninfo import get_monitors
 from uptime import uptime
 
@@ -158,6 +159,7 @@ class LogoMaker:
 
 class Computer:
     def __init__(self):
+        self.pool = ThreadPool()
         linux_distro = ['ubuntu','fedora','mint']
         self.uname = platform.uname()
         self.username = getpass.getuser()
@@ -165,10 +167,12 @@ class Computer:
         self.cpu = cpuinfo.get_cpu_info()
         self.brand = self.cpu['brand'].rstrip()
         self.hz = self.cpu['hz_actual']
-        mem = psutil.virtual_memory()
+        mem_future = self.pool.apply_async(psutil.virtual_memory)
+        mem = mem_future.get()
         self.mem_total = humanbytes(mem.total)
         self.mem_used = humanbytes(mem.used)
-        disk = psutil.disk_usage(".")
+        disk_future = self.pool.apply_async(psutil.disk_usage, ('.',))
+        disk = disk_future.get()
         self.disk_free = humanbytes(disk.free)
         self.disk_total = humanbytes(disk.total)
         self.screen = self.get_screen()
@@ -201,7 +205,8 @@ class Computer:
 
     def get_screen(self):
         try:
-            return str(get_monitors()[0]).strip('monitor()').split('+')[0]
+            screen_future = self.pool.apply_async(get_monitors)
+            return str(screen_future.get()[0]).strip('monitor()').split('+')[0]
         except:
             return None
 
