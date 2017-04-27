@@ -131,6 +131,33 @@ class LogoMaker:
         print(f"{y}              `-`{xx}")
 
 
+    def win810(self, username, os, kernel, uptime, shell, hdd, cpu, ram, motherboard, screen=False):
+        print(f"{b}                                  ..,   {username}\n"
+              f"{b}                      ....,,:;+ccllll   {os}\n"
+              f"{b}        ...,,+:;  cllllllllllllllllll   {kernel}\n"
+              f"{b}  ,cclllllllllll  lllllllllllllllllll   {uptime}\n"
+              f"{b}  llllllllllllll  lllllllllllllllllll   {shell}\n"
+              f"{b}  llllllllllllll  lllllllllllllllllll   {hdd}\n"
+              f"{b}  llllllllllllll  lllllllllllllllllll   {cpu}\n"
+              f"{b}  llllllllllllll  lllllllllllllllllll   {ram}")
+        if screen:
+              print(f"{b}  llllllllllllll  lllllllllllllllllll   {screen}\n"
+                    f"                                        {motherboard}")
+        else:
+            print(f"{b}  llllllllllllll  lllllllllllllllllll   {motherboard}\n")
+
+        print(f"{b}  llllllllllllll  lllllllllllllllllll\n"
+              f"{b}  llllllllllllll  lllllllllllllllllll\n"
+              f"{b}  llllllllllllll  lllllllllllllllllll\n"
+              f"{b}  llllllllllllll  lllllllllllllllllll\n"
+              f"{b}  llllllllllllll  lllllllllllllllllll\n"
+              f"{b}  llllllllllllll  lllllllllllllllllll\n"
+              f"{b}  `'ccllllllllll  lllllllllllllllllll\n"
+              f"{b}           `'""*::  :ccllllllllllllllll\n"
+              f"{b}                        ````''\"*::cll\n"
+              f"{b}                                   ``")
+
+
     def not_win10(self, username, os, kernel, uptime, shell, hdd, cpu, ram, motherboard, screen=False):
         print(f"{lr}         ,.=:^!^!t3Z3z.,\n"
               f"{lr}        :tt:::tt333EE3                  {username}\n"
@@ -188,9 +215,9 @@ def get_specs(username, uname, uptime, mem_total, mem_used, cpu_brand, cpu_hz, d
     if 'ubuntu' in uname.version.lower():
         make_logo.ubuntu(username,os,kernel,uptime,packages,shell,hdd,cpu,ram,motherboard,screen)
     elif 'windows' in uname.system.lower():
-        if '10' in uname.release:
+        if '10' or '8' in uname.release:
             #Add Win10 Logo!!!
-            make_logo.not_win10(username,os,kernel,uptime,shell,hdd,cpu,ram,motherboard,screen)
+            make_logo.win810(username,os,kernel,uptime,shell,hdd,cpu,ram,motherboard,screen)
         else:
             make_logo.not_win10(username, os, kernel, uptime, shell, hdd, cpu, ram, motherboard, screen)
     else:
