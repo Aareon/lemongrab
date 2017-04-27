@@ -20,7 +20,8 @@ Open an issue with your OS, and preferably provide a link to an ascii image of t
 python3.6 -m pip install py-cpuinfo
 python3.6 -m pip install psutil
 python3.6 -m pip install screeninfo
-python3.6 -m pip install uptime```
+python3.6 -m pip install uptime
+```
 
 License
 ----
