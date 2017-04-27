@@ -36,7 +36,7 @@ def ddhhmmss(seconds):
 
 class LogoMaker:
     def __init__(self):
-        computer = Computer()
+        self.computer = Computer()
         self.w = '\033[1;37;40m'
         self.y = '\033[1;33;40m'
         self.r = '\033[0;31;40m'
@@ -45,45 +45,44 @@ class LogoMaker:
         self.b = '\033[0;34;40m'
         self.xx = '\033[0m'
 
-        self.username = f'{self.lr}{computer.username}{self.w}@{self.lr}{computer.uname.node}{self.xx}'
-        self.kernel = f'{self.lr}Kernel: {self.xx}{computer.uname.machine}'
+        self.username = f'{self.lr}{self.computer.username}{self.w}@{self.lr}{self.computer.uname.node}{self.xx}'
+        self.kernel = f'{self.lr}Kernel: {self.xx}{self.computer.uname.machine}'
         
-        if 'linux' in computer.uname.system.lower():
-            self.system = f'{self.lr}OS: {self.xx}{computer.uname.system}'
-            self.kernel = f'{self.lr}Kernel: {self.xx}{computer.uname.machine} Linux {computer.uname.release}'
+        if 'linux' in self.computer.uname.system.lower():
+            self.os = f'{self.lr}OS: {self.xx}{self.computer.uname.system}'
+            self.kernel = f'{self.lr}Kernel: {self.xx}{self.computer.uname.machine} Linux {self.computer.uname.release}'
         else:
-            self.system = f'{self.lr}OS: {self.xx}{computer.uname.system} {computer.uname.release}'
-        self.uptime = f'{self.lr}Uptime: {self.xx}{computer.uptime}'
+            self.os = f'{self.lr}OS: {self.xx}{self.computer.uname.system} {self.computer.uname.release}'
+        self.uptime = f'{self.lr}Uptime: {self.xx}{self.computer.uptime}'
 
-        self.packages = None
+        if 'linux' in self.computer.uname.system.lower():
+            self.packages = f'{self.lr}Packages: {self.xx}{self.computer.packages}'
 
-        if 'linux' in computer.uname.system.lower():
-            self.packages = f'{self.lr}Packages: {self.xx}{computer.packages}'
-
-        self.shell = f'{self.lr}Shell: {self.xx}{computer.shell}'
-        self.hdd = f'{self.lr}HDD: {self.xx}{computer.disk_free} / {computer.disk_total} (Free/Total)'
-        self.cpu = f'{self.lr}CPU: {self.xx}{computer.brand} @ {computer.hz}'
-        self.ram = f'{self.lr}RAM: {self.xx}{computer.mem_used} / {computer.mem_total} (Used/Total)'
+        self.shell = f'{self.lr}Shell: {self.xx}{self.computer.shell}'
+        self.hdd = f'{self.lr}HDD: {self.xx}{self.computer.disk_free} / {self.computer.disk_total} (Free/Total)'
+        self.cpu = f'{self.lr}CPU: {self.xx}{self.computer.brand} @ {self.computer.hz}'
+        self.ram = f'{self.lr}RAM: {self.xx}{self.computer.mem_used} / {self.computer.mem_total} (Used/Total)'
 
         self.screen = None
 
-        if computer.screen:
-            self.screen = f'{self.lr}Resolution: {self.xx}{computer.screen}'
+        if self.computer.screen:
+            self.screen = f'{self.lr}Resolution: {self.xx}{self.computer.screen}'
 
-        self.motherboard = f'{self.lr}Motherboard: {self.xx}{computer.motherboard_vendor} {computer.motherboard_name}'
-        
-        if computer.os == 'ubuntu':
+        self.motherboard = f'{self.lr}Motherboard: {self.xx}{self.computer.motherboard_vendor} {self.computer.motherboard_name}'
+
+    def display(self):
+        if self.computer.os == 'ubuntu':
             self.ubuntu()
-        elif computer.os == '10/8':
+        elif self.computer.os == '10/8':
             self.win10_8()
-        elif computer.os == 'win':
+        elif self.computer.os == 'win':
             self.old_win()
         else:
             self.n_a()
 
     def ubuntu(self):
         print(f"{self.w}              .-.                                                              {self.username}\n"
-              f"{self.y}        .-'``{self.w}(|||)                                                             {self.system}\n"
+              f"{self.y}        .-'``{self.w}(|||)                                                             {self.os}\n"
               f"{self.y}     ,`\ \    {self.w}`-`{self.y}.                 88                         88               {self.kernel}\n"
               f"{self.y}    /   \ '``-.   `                88                         88               {self.uptime}\n"
               f"{self.y}  .-.  ,       `___:      88   88  88,888,  88   88  ,88888, 88888  88   88    {self.packages}\n"
@@ -103,7 +102,7 @@ class LogoMaker:
         
     def win10_8(self):
         print(f"{self.b}                                  ..,   {self.username}\n"
-              f"{self.b}                      ....,,:;+ccllll   {self.system}\n"
+              f"{self.b}                      ....,,:;+ccllll   {self.os}\n"
               f"{self.b}        ...,,+:;  cllllllllllllllllll   {self.kernel}\n"
               f"{self.b}  ,cclllllllllll  lllllllllllllllllll   {self.uptime}\n"
               f"{self.b}  llllllllllllll  lllllllllllllllllll   {self.shell}\n"
@@ -131,7 +130,7 @@ class LogoMaker:
         print(f"{self.lr}         ,.=:^!^!t3Z3z.,\n"
               f"{self.lr}        :tt:::tt333EE3                  {self.username}\n"
               f"{self.lr}        Et:::ztt33EEE  {self.g}@Ee.,      ..,\n"
-              f"{self.lr}       ;tt:::tt333EE7 {self.g};EEEEEEttttt33#   {self.system}\n"
+              f"{self.lr}       ;tt:::tt333EE7 {self.g};EEEEEEttttt33#   {self.os}\n"
               f"{self.lr}      :Et:::zt333EEQ. {self.g}SEEEEEttttt33QL   {self.kernel}\n"
               f"{self.lr}      it::::tt333EEF {self.g}@EEEEEEttttt33F    {self.uptime}\n"
               f"{self.lr}     ;3=*^```'*4EEV {self.g}:EEEEEEttttt33@.    {self.shell}\n"
@@ -151,13 +150,13 @@ class LogoMaker:
         
     def n_a(self):
         print(
-            f"{self.username}\n{self.system}\n{self.kernel}\n{self.uptime}\n{self.shell}\n{self.hdd}\n{self.cpu}\n{self.ram}")
+            f"{self.username}\n{self.os}\n{self.kernel}\n{self.uptime}\n{self.shell}\n{self.hdd}\n{self.cpu}\n{self.ram}")
         if self.screen:
             print(self.screen)
         print(
             f"{self.motherboard}\nThis OS does not have a logo added yet. Post an issue on the GitHub repository to request support")
 
-class Computer(object):
+class Computer:
     def __init__(self):
         linux_distro = ['ubuntu','fedora','mint']
         self.uname = platform.uname()
@@ -184,9 +183,9 @@ class Computer(object):
         else:
             self.os = 'nothing'
 
-        self.packages = None
+        system_lower = self.uname.system.lower()
 
-        if self.os in linux_distro:
+        if 'linux' in system_lower:
             self.packages = self.get_packages()
             manufacturer_and_name = subprocess.run("grep '' /sys/class/dmi/id/board_vendor && grep '' /sys/class/dmi/id/board_name", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.split('\n')
             self.motherboard_vendor, self.motherboard_name = manufacturer_and_name[0], manufacturer_and_name[1]
@@ -207,10 +206,8 @@ class Computer(object):
             return None
 
     def get_packages(self):
-        try:
-            return subprocess.run("dpkg -l | grep -c '^ii'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
-        except:
-            return None
+        return subprocess.run("dpkg -l | grep -c '^ii'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
 
 if __name__ == '__main__':
     make_logo = LogoMaker()
+    make_logo.display()
