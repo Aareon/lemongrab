@@ -10,6 +10,13 @@ from screeninfo import get_monitors
 from multiprocessing.pool import ThreadPool
 from uptime import uptime
 
+w = '\033[1;37;40m'
+y = '\033[1;33;40m'
+r = '\033[0;31;40m'
+lr = '\033[0;1;31m'
+g = '\033[0;32;40m'
+b = '\033[0;34;40m'
+xx = '\033[0m'
 
 def humanbytes(B):
    """Return the given bytes as a human friendly KB, MB, GB, or TB string"""
@@ -75,8 +82,11 @@ def get_packages():
     return subprocess.run("dpkg -l | grep -c '^ii'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
 
 
-def get_shell():
-    return subprocess.run("$SHELL --version", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n').split('(')[0]
+def get_shell(os):
+    if 'linux' in os:
+        return subprocess.run("$SHELL --version", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n').split('(')[0]
+    else:
+        return subprocess.run("bash --version", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n').split('(')[0]
 
 
 def get_disk():
@@ -93,7 +103,7 @@ def get_screen():
 
 
 def get_motherboard(os):
-    if os == 'linux':
+    if 'linux' in os:
         manufacturer_and_name = subprocess.run("grep '' /sys/class/dmi/id/board_vendor && grep '' /sys/class/dmi/id/board_name", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.split('\n')
         manufacturer = manufacturer_and_name[0]
         name = manufacturer_and_name[1]
@@ -102,34 +112,81 @@ def get_motherboard(os):
         name = subprocess.run("wmic baseboard get product", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n\t').split('\n')[2].rstrip()
     return manufacturer, name
 
+class LogoMaker:
+    def ubuntu(self, username, os, kernel, uptime, packages, shell, hdd, cpu, ram, motherboard, screen=False):
+        print(f"{w}              .-.                                                              {username}\n"
+              f"{y}        .-'``{w}(|||)                                                             {os}\n"
+              f"{y}     ,`\ \    {w}`-`{y}.                 88                         88               {kernel}\n"
+              f"{y}    /   \ '``-.   `                88                         88               {uptime}\n"
+              f"{y}  .-.  ,       `___:      88   88  88,888,  88   88  ,88888, 88888  88   88    {packages}\n"
+              f"{y} (:::) :       {w} ___{y}       88   88  88   88  88   88  88   88  88    88   88    {shell}\n"
+              f"{y}  `-`  `       {w},   :{y}      88   88  88   88  88   88  88   88  88    88   88    {hdd}\n"
+              f"{y}    \   /{w} ,..-`   ,{y}       88   88  88   88  88   88  88   88  88    88   88    {cpu}\n"
+              f"{y}     `./ {w}/    {y}.-.{w}`{y}        '88888'  '88888'  '88888'  88   88  '8888 '88888'    {ram}")
+        if screen:
+          print(f"{w}        `-..-{y}(   )                                                                          {screen}")
+          print(f"{y}              `-`                                                                                           {motherboard}")
+        else:
+          print(f"{w}        `-..-{y}(   )                                                             {motherboard}")
+        print(f"{y}              `-`{xx}")
 
-def get_specs(username, uname, mem_total, mem_used, cpu_brand, cpu_hz, disk_free, disk_total, screen, motherboard_vendor, motherboard_name, packages=None, shell_version=None):
-    specs = []
-    specs.append('{}@{}'.format(username, uname.node))
+
+    def not_win10(self, username, os, kernel, uptime, shell, hdd, cpu, ram, motherboard, screen=False):
+        print(f"{lr}         ,.=:^!^!t3Z3z.,\n"
+              f"{lr}        :tt:::tt333EE3                  {username}\n"
+              f"{lr}        Et:::ztt33EEE  {g}@Ee.,      ..,\n"
+              f"{lr}       ;tt:::tt333EE7 {g};EEEEEEttttt33#   {os}\n"
+              f"{lr}      :Et:::zt333EEQ. {g}SEEEEEttttt33QL   {kernel}\n"
+              f"{lr}      it::::tt333EEF {g}@EEEEEEttttt33F    {uptime}\n"
+              f"{lr}     ;3=*^```'*4EEV {g}:EEEEEEttttt33@.    {shell}\n"
+              f"{b}     ,.=::::it=., {lr}` {g}@EEEEEEtttz33QF     {hdd}\n"
+              f"{b}    ;::::::::zt33)   {g}'4EEEtttji3P*      {cpu}\n"
+              f"{b}   :t::::::::tt33.{y}:Z3z..  {g}`` {y},..g.      {ram}")
+        if screen:
+            print(f"{b}   i::::::::zt33F {y}AEEEtttt::::ztF       {screen}\n"
+                  f"{b}  ;:::::::::t33V {y};EEEttttt::::t3        {motherboard}")
+        else:
+            print(f"{b}   i::::::::zt33F {y}AEEEtttt::::ztF       \n"
+                  f"{b}  ;:::::::::t33V {y};EEEttttt::::t3")
+        print(f"{b}  E::::::::zt33L {y}@EEEtttt::::z3F        \n"
+              f"{b} (3=*^```'*4E3) {y};EEEtttt:::::tZ`        \n"
+              f"{b}             ` {y}:EEEEtttt::::z7          \n"
+              f"{y}                 'VEzjt:;;z>*`        ")
+
+
+def get_specs(username, uname, uptime, mem_total, mem_used, cpu_brand, cpu_hz, disk_free, disk_total, screen, motherboard_vendor, motherboard_name, packages=None, shell_version=None):
+    make_logo = LogoMaker()
+    username = f'{lr}{username}{w}@{lr}{uname.node}{xx}'
+    kernel = f'{lr}Kernel: {xx}{uname.machine} {uname.release}'
 
     if 'linux' in uname.system.lower():
-        specs.append('OS: {}'.format(system))
-        specs.append('Kernel: {} Linux {}'.format(uname.machine, uname.release))
+        os = f'{lr}OS: {xx}{system}'
+        kernel = f'{lr}Kernel: {xx}{uname.machine} Linux {uname.release}'
     else:
-        specs.append('OS: {} {}'.format(uname.system, uname.release))
-    specs.append('Uptime: {}'.format(uptime))
+        os = f'{lr}OS: {xx}{uname.system} {uname.release}'
+    uptime = f'{lr}Uptime: {xx}{uptime}'
 
     if 'linux' in uname.system.lower():
-        specs.append('Packages: {}'.format(packages))
-        specs.append('Shell: {}'.format(shell_version))
+        packages = f'{lr}Packages: {xx}{packages}'
 
-    specs.append('HDD: {} / {} (Free/Total)'.format(disk_free, disk_total))
-
-    specs.append('CPU: {} @ {}'.format(cpu_brand, cpu_hz))
-    specs.append('RAM: {} / {} (Used/Total)'.format(mem_used, mem_total))
+    shell = f'{lr}Shell: {xx}{shell_version}'
+    hdd = f'{lr}HDD: {xx}{disk_free} / {disk_total} (Free/Total)'
+    cpu = f'{lr}CPU: {xx}{cpu_brand} @ {cpu_hz}'
+    ram = f'{lr}RAM: {xx}{mem_used} / {mem_total} (Used/Total)'
 
     if screen:
-        specs.append('Resolution: {}'.format(screen))
+        screen = f'{lr}Resolution: {xx}{screen}'
 
-    specs.append('Motherboard: {} {}'.format(motherboard_vendor, motherboard_name))
+    motherboard = f'{lr}Motherboard: {xx}{motherboard_vendor} {motherboard_name}'
 
-    for item in specs:
-        print(item)
+    if 'ubuntu' in uname.version.lower():
+        make_logo.ubuntu(username,os,kernel,uptime,packages,shell,hdd,cpu,ram,motherboard,screen)
+    elif 'windows' in uname.system.lower():
+        if '10' in uname.release:
+            #Add Win10 Logo!!!
+            make_logo.not_win10(username,os,kernel,uptime,shell,hdd,cpu,ram,motherboard,screen)
+        else:
+            make_logo.not_win10(username, os, kernel, uptime, shell, hdd, cpu, ram, motherboard, screen)
 
 if __name__ == '__main__':
     pool = ThreadPool(processes=5)
@@ -161,6 +218,9 @@ if __name__ == '__main__':
     version = uname.version
     machine = uname.machine
 
+    shell_future = pool.apply_async(get_shell, (system,))
+    shell = shell_future.get()
+
     if 'linux' in uname.system.lower():
         linux_future = pool.apply_async(linux)
         system = linux_future.get()
@@ -168,14 +228,11 @@ if __name__ == '__main__':
         packages_future = pool.apply_async(get_packages)
         packages = packages_future.get()
 
-        shell_future = pool.apply_async(get_shell)
-        shell = shell_future.get()
-
         motherboard_future = pool.apply_async(get_motherboard, ('linux',))
         motherboard_vendor, motherboard_name = motherboard_future.get()
 
-        get_specs(username, uname, mem_total, mem_used, cpu_brand, cpu_hz, disk_free, disk_total, screen, motherboard_vendor, motherboard_name, packages=packages, shell_version=shell)
+        get_specs(username, uname, uptime, mem_total, mem_used, cpu_brand, cpu_hz, disk_free, disk_total, screen, motherboard_vendor, motherboard_name, packages=packages, shell_version=shell)
     else:
         motherboard_future = pool.apply_async(get_motherboard, ('windows',))
         motherboard_vendor, motherboard_name = motherboard_future.get()
-        get_specs(username, uname, mem_total, mem_used, cpu_brand, cpu_hz, disk_free, disk_total, screen, motherboard_vendor, motherboard_name, packages=None, shell_version=None)
+        get_specs(username, uname, uptime, mem_total, mem_used, cpu_brand, cpu_hz, disk_free, disk_total, screen, motherboard_vendor, motherboard_name, packages=None, shell_version=shell)
