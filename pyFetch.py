@@ -1,7 +1,4 @@
-import sys
-import os
 import platform
-import json
 import getpass
 import subprocess
 import cpuinfo
@@ -113,38 +110,51 @@ def get_motherboard(os):
     return manufacturer, name
 
 class LogoMaker:
-    def ubuntu(self, username, os, kernel, uptime, packages, shell, hdd, cpu, ram, motherboard, screen=False):
-        print(f"{w}              .-.                                                              {username}\n"
-              f"{y}        .-'``{w}(|||)                                                             {os}\n"
-              f"{y}     ,`\ \    {w}`-`{y}.                 88                         88               {kernel}\n"
-              f"{y}    /   \ '``-.   `                88                         88               {uptime}\n"
-              f"{y}  .-.  ,       `___:      88   88  88,888,  88   88  ,88888, 88888  88   88    {packages}\n"
-              f"{y} (:::) :       {w} ___{y}       88   88  88   88  88   88  88   88  88    88   88    {shell}\n"
-              f"{y}  `-`  `       {w},   :{y}      88   88  88   88  88   88  88   88  88    88   88    {hdd}\n"
-              f"{y}    \   /{w} ,..-`   ,{y}       88   88  88   88  88   88  88   88  88    88   88    {cpu}\n"
-              f"{y}     `./ {w}/    {y}.-.{w}`{y}        '88888'  '88888'  '88888'  88   88  '8888 '88888'    {ram}")
-        if screen:
-          print(f"{w}        `-..-{y}(   )                                                                          {screen}")
-          print(f"{y}              `-`                                                                                           {motherboard}")
+    def __init__(self, username, os, kernel, uptime, packages, shell, hdd, cpu, ram, motherboard, screen=False):
+        self.username = username
+        self.os = os
+        self.kernel = kernel
+        self.uptime = uptime
+        self.packages = packages
+        self.shell = shell
+        self.hdd = hdd
+        self.cpu = cpu
+        self.ram = ram
+        self.motherboard = motherboard
+        self.screen = screen
+
+    def ubuntu(self):
+        print(f"{w}              .-.                                                              {self.username}\n"
+              f"{y}        .-'``{w}(|||)                                                             {self.os}\n"
+              f"{y}     ,`\ \    {w}`-`{y}.                 88                         88               {self.kernel}\n"
+              f"{y}    /   \ '``-.   `                88                         88               {self.uptime}\n"
+              f"{y}  .-.  ,       `___:      88   88  88,888,  88   88  ,88888, 88888  88   88    {self.packages}\n"
+              f"{y} (:::) :       {w} ___{y}       88   88  88   88  88   88  88   88  88    88   88    {self.shell}\n"
+              f"{y}  `-`  `       {w},   :{y}      88   88  88   88  88   88  88   88  88    88   88    {self.hdd}\n"
+              f"{y}    \   /{w} ,..-`   ,{y}       88   88  88   88  88   88  88   88  88    88   88    {self.cpu}\n"
+              f"{y}     `./ {w}/    {y}.-.{w}`{y}        '88888'  '88888'  '88888'  88   88  '8888 '88888'    {self.ram}")
+        if self.screen:
+          print(f"{w}        `-..-{y}(   )                                                                          {self.screen}")
+          print(f"{y}              `-`                                                                                           {self.motherboard}")
         else:
-          print(f"{w}        `-..-{y}(   )                                                             {motherboard}")
+          print(f"{w}        `-..-{y}(   )                                                             {self.motherboard}")
         print(f"{y}              `-`{xx}")
 
 
-    def win810(self, username, os, kernel, uptime, shell, hdd, cpu, ram, motherboard, screen=False):
-        print(f"{b}                                  ..,   {username}\n"
-              f"{b}                      ....,,:;+ccllll   {os}\n"
-              f"{b}        ...,,+:;  cllllllllllllllllll   {kernel}\n"
-              f"{b}  ,cclllllllllll  lllllllllllllllllll   {uptime}\n"
-              f"{b}  llllllllllllll  lllllllllllllllllll   {shell}\n"
-              f"{b}  llllllllllllll  lllllllllllllllllll   {hdd}\n"
-              f"{b}  llllllllllllll  lllllllllllllllllll   {cpu}\n"
-              f"{b}  llllllllllllll  lllllllllllllllllll   {ram}")
-        if screen:
-              print(f"{b}  llllllllllllll  lllllllllllllllllll   {screen}\n"
-                    f"                                        {motherboard}")
+    def win810(self):
+        print(f"{b}                                  ..,   {self.username}\n"
+              f"{b}                      ....,,:;+ccllll   {self.os}\n"
+              f"{b}        ...,,+:;  cllllllllllllllllll   {self.kernel}\n"
+              f"{b}  ,cclllllllllll  lllllllllllllllllll   {self.uptime}\n"
+              f"{b}  llllllllllllll  lllllllllllllllllll   {self.shell}\n"
+              f"{b}  llllllllllllll  lllllllllllllllllll   {self.hdd}\n"
+              f"{b}  llllllllllllll  lllllllllllllllllll   {self.cpu}\n"
+              f"{b}  llllllllllllll  lllllllllllllllllll   {self.ram}")
+        if self.screen:
+              print(f"{b}  llllllllllllll  lllllllllllllllllll   {self.screen}\n"
+                    f"                                        {self.motherboard}")
         else:
-            print(f"{b}  llllllllllllll  lllllllllllllllllll   {motherboard}\n")
+            print(f"{b}  llllllllllllll  lllllllllllllllllll   {self.motherboard}\n")
 
         print(f"{b}  llllllllllllll  lllllllllllllllllll\n"
               f"{b}  llllllllllllll  lllllllllllllllllll\n"
@@ -158,20 +168,20 @@ class LogoMaker:
               f"{b}                                   ``")
 
 
-    def not_win10(self, username, os, kernel, uptime, shell, hdd, cpu, ram, motherboard, screen=False):
+    def not_win10(self):
         print(f"{lr}         ,.=:^!^!t3Z3z.,\n"
-              f"{lr}        :tt:::tt333EE3                  {username}\n"
+              f"{lr}        :tt:::tt333EE3                  {self.username}\n"
               f"{lr}        Et:::ztt33EEE  {g}@Ee.,      ..,\n"
-              f"{lr}       ;tt:::tt333EE7 {g};EEEEEEttttt33#   {os}\n"
-              f"{lr}      :Et:::zt333EEQ. {g}SEEEEEttttt33QL   {kernel}\n"
-              f"{lr}      it::::tt333EEF {g}@EEEEEEttttt33F    {uptime}\n"
-              f"{lr}     ;3=*^```'*4EEV {g}:EEEEEEttttt33@.    {shell}\n"
-              f"{b}     ,.=::::it=., {lr}` {g}@EEEEEEtttz33QF     {hdd}\n"
-              f"{b}    ;::::::::zt33)   {g}'4EEEtttji3P*      {cpu}\n"
-              f"{b}   :t::::::::tt33.{y}:Z3z..  {g}`` {y},..g.      {ram}")
-        if screen:
-            print(f"{b}   i::::::::zt33F {y}AEEEtttt::::ztF       {screen}\n"
-                  f"{b}  ;:::::::::t33V {y};EEEttttt::::t3        {motherboard}")
+              f"{lr}       ;tt:::tt333EE7 {g};EEEEEEttttt33#   {self.os}\n"
+              f"{lr}      :Et:::zt333EEQ. {g}SEEEEEttttt33QL   {self.kernel}\n"
+              f"{lr}      it::::tt333EEF {g}@EEEEEEttttt33F    {self.uptime}\n"
+              f"{lr}     ;3=*^```'*4EEV {g}:EEEEEEttttt33@.    {self.shell}\n"
+              f"{b}     ,.=::::it=., {lr}` {g}@EEEEEEtttz33QF     {self.hdd}\n"
+              f"{b}    ;::::::::zt33)   {g}'4EEEtttji3P*      {self.cpu}\n"
+              f"{b}   :t::::::::tt33.{y}:Z3z..  {g}`` {y},..g.      {self.ram}")
+        if self.screen:
+            print(f"{b}   i::::::::zt33F {y}AEEEtttt::::ztF       {self.screen}\n"
+                  f"{b}  ;:::::::::t33V {y};EEEttttt::::t3        {self.motherboard}")
         else:
             print(f"{b}   i::::::::zt33F {y}AEEEtttt::::ztF       \n"
                   f"{b}  ;:::::::::t33V {y};EEEttttt::::t3")
@@ -180,17 +190,16 @@ class LogoMaker:
               f"{b}             ` {y}:EEEEtttt::::z7          \n"
               f"{y}                 'VEzjt:;;z>*`        ")
 
-    def nothing(self, username, os, kernel, uptime, shell, hdd, cpu, ram, motherboard, screen=False):
-        print(f"{username}\n{os}\n{kernel}\n{uptime}\n{shell}\n{hdd}\n{cpu}\n{ram}")
-        if screen:
-            print(screen)
-        print(f"{motherboard}\nThis OS does not have a logo added yet. Post an issue on the GitHub repository to request support")
+    def nothing(self):
+        print(f"{self.username}\n{self.os}\n{self.kernel}\n{self.uptime}\n{self.shell}\n{self.hdd}\n{self.cpu}\n{self.ram}")
+        if self.screen:
+            print(self.screen)
+        print(f"{self.motherboard}\nThis OS does not have a logo added yet. Post an issue on the GitHub repository to request support")
 
 
 def get_specs(username, uname, uptime, mem_total, mem_used, cpu_brand, cpu_hz, disk_free, disk_total, screen, motherboard_vendor, motherboard_name, packages=None, shell_version=None):
-    make_logo = LogoMaker()
     username = f'{lr}{username}{w}@{lr}{uname.node}{xx}'
-    kernel = f'{lr}Kernel: {xx}{uname.machine} {uname.release}'
+    kernel = f'{lr}Kernel: {xx}{uname.machine}'
 
     if 'linux' in uname.system.lower():
         os = f'{lr}OS: {xx}{system}'
@@ -198,6 +207,8 @@ def get_specs(username, uname, uptime, mem_total, mem_used, cpu_brand, cpu_hz, d
     else:
         os = f'{lr}OS: {xx}{uname.system} {uname.release}'
     uptime = f'{lr}Uptime: {xx}{uptime}'
+
+    packages = None
 
     if 'linux' in uname.system.lower():
         packages = f'{lr}Packages: {xx}{packages}'
@@ -211,17 +222,18 @@ def get_specs(username, uname, uptime, mem_total, mem_used, cpu_brand, cpu_hz, d
         screen = f'{lr}Resolution: {xx}{screen}'
 
     motherboard = f'{lr}Motherboard: {xx}{motherboard_vendor} {motherboard_name}'
+    make_logo = LogoMaker(username,os,kernel,uptime,packages,shell,hdd,cpu,ram,motherboard,screen)
 
     if 'ubuntu' in uname.version.lower():
-        make_logo.ubuntu(username,os,kernel,uptime,packages,shell,hdd,cpu,ram,motherboard,screen)
+        make_logo.ubuntu()
     elif 'windows' in uname.system.lower():
         if '10' or '8' in uname.release:
             #Add Win10 Logo!!!
-            make_logo.win810(username,os,kernel,uptime,shell,hdd,cpu,ram,motherboard,screen)
+            make_logo.win810()
         else:
-            make_logo.not_win10(username, os, kernel, uptime, shell, hdd, cpu, ram, motherboard, screen)
+            make_logo.not_win10()
     else:
-        make_logo.nothing(username,os,kernel,uptime,packages,shell,hdd,cpu,ram,motherboard,screen)
+        make_logo.nothing()
 
 if __name__ == '__main__':
     pool = ThreadPool(processes=5)
