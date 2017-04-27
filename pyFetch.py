@@ -74,13 +74,13 @@ class LogoMaker:
 
     def display(self, default=False):
         if not default:
-            if self.computer.os == 'ubuntu':
+            if 'ubuntu' in self.computer.os.lower():
                 self.ubuntu()
             elif self.computer.os == '10/8':
                 self.win10_8()
             elif self.computer.os == 'win':
                 self.old_win()
-            elif self.computer.os == 'mint':
+            elif 'mint' in self.computer.os.lower():
                 self.mint()
             else:
                 self.n_a()
@@ -259,4 +259,4 @@ class Computer:
 
 if __name__ == '__main__':
     make_logo = LogoMaker()
-    make_logo.display()
+    make_logo.display('mint')
