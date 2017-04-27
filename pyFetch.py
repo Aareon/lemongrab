@@ -50,7 +50,11 @@ class LogoMaker:
         self.kernel = f'{self.lr}Kernel: {self.xx}{self.computer.uname.machine}'
         
         if 'linux' in self.computer.uname.system.lower():
-            self.os = f'{self.lr}OS: {self.xx}{self.computer.uname.system}'
+            import distro
+            distribution = ''
+            for item in distro.linux_distribution():
+                distribution += ' ' + item
+            self.os = f'{self.lr}OS: {self.xx}{distribution}'
             self.kernel = f'{self.lr}Kernel: {self.xx}{self.computer.uname.machine} Linux {self.computer.uname.release}'
         else:
             self.os = f'{self.lr}OS: {self.xx}{self.computer.uname.system} {self.computer.uname.release}'
@@ -160,7 +164,6 @@ class LogoMaker:
 class Computer:
     def __init__(self):
         self.pool = ThreadPool()
-        linux_distro = ['ubuntu','fedora','mint']
         self.uname = platform.uname()
         self.username = getpass.getuser()
         self.uptime = ddhhmmss(int(uptime()))
