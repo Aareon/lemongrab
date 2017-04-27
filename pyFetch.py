@@ -153,6 +153,12 @@ class LogoMaker:
               f"{b}             ` {y}:EEEEtttt::::z7          \n"
               f"{y}                 'VEzjt:;;z>*`        ")
 
+    def nothing(self, username, os, kernel, uptime, shell, hdd, cpu, ram, motherboard, screen=False):
+        print(f"{username}\n{os}\n{kernel}\n{uptime}\n{shell}\n{hdd}\n{cpu}\n{ram}")
+        if screen:
+            print(screen)
+        print(f"{motherboard}\nThis OS does not have a logo added yet. Post an issue on the GitHub repository to request support")
+
 
 def get_specs(username, uname, uptime, mem_total, mem_used, cpu_brand, cpu_hz, disk_free, disk_total, screen, motherboard_vendor, motherboard_name, packages=None, shell_version=None):
     make_logo = LogoMaker()
@@ -187,6 +193,8 @@ def get_specs(username, uname, uptime, mem_total, mem_used, cpu_brand, cpu_hz, d
             make_logo.not_win10(username,os,kernel,uptime,shell,hdd,cpu,ram,motherboard,screen)
         else:
             make_logo.not_win10(username, os, kernel, uptime, shell, hdd, cpu, ram, motherboard, screen)
+    else:
+        make_logo.nothing(username,os,kernel,uptime,packages,shell,hdd,cpu,ram,motherboard,screen)
 
 if __name__ == '__main__':
     pool = ThreadPool(processes=5)
