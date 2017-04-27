@@ -42,6 +42,7 @@ class LogoMaker:
         self.y = '\033[1;33;40m'
         self.r = '\033[0;31;40m'
         self.lr = '\033[0;1;31m'
+        self.lg = '\033[1;32;40m'
         self.g = '\033[0;32;40m'
         self.b = '\033[0;34;40m'
         self.xx = '\033[0m'
@@ -71,15 +72,29 @@ class LogoMaker:
 
         self.motherboard = f'{self.lr}Motherboard: {self.xx}{self.computer.motherboard_vendor} {self.computer.motherboard_name}'
 
-    def display(self):
-        if self.computer.os == 'ubuntu':
-            self.ubuntu()
-        elif self.computer.os == '10/8':
-            self.win10_8()
-        elif self.computer.os == 'win':
-            self.old_win()
+    def display(self, default=False):
+        if not default:
+            if self.computer.os == 'ubuntu':
+                self.ubuntu()
+            elif self.computer.os == '10/8':
+                self.win10_8()
+            elif self.computer.os == 'win':
+                self.old_win()
+            elif self.computer.os == 'mint':
+                self.mint()
+            else:
+                self.n_a()
         else:
-            self.n_a()
+            if default == 'ubuntu':
+                self.ubuntu()
+            elif default == '10/8':
+                self.win10_8()
+            elif default == 'win':
+                self.old_win()
+            elif default == 'mint':
+                self.mint()
+            else:
+                self.n_a()
 
     def ubuntu(self):
         print(f"{self.w}              .-.                                                              {self.username}\n"
@@ -148,6 +163,31 @@ class LogoMaker:
               f"{self.b} (3=*^```'*4E3) {self.y};EEEtttt:::::tZ`        \n"
               f"{self.b}             ` {self.y}:EEEEtttt::::z7          \n"
               f"{self.y}                 'VEzjt:;;z>*`        ")
+
+    def mint(self):
+        print(f"                                      {self.username}\n"
+              f"{self.lg} MMMMMMMMMMMMMMMMMMMMMMMMMmds+.       \n"
+              f"{self.lg} MMm----::-://////////////oymNMd+`    {self.os}\n"
+              f"{self.lg} MMd      {self.w}/++                {self.lg}-sNMd:   {self.kernel}\n"
+              f"{self.lg} MMNso/` {self.w}dMM    `.::-. .-::.` {self.lg}.hMN:   {self.uptime}\n"
+              f"{self.lg} ddddMMh  {self.w}dMM   :hNMNMNhNMNMNh: {self.lg}`NMm  {self.shell}\n"
+              f"{self.lg}     NMm  {self.w}dMM  .NMN/-+MMM+-/NMN` {self.lg}dMM  {self.hdd}\n"
+              f"{self.lg}     NMm  {self.w}dMM  -MMm  `MMM   dMM. {self.lg}dMM  {self.cpu}\n"
+              f"{self.lg}     NMm  {self.w}dMM  -MMm  `MMM   dMM. {self.lg}dMM  {self.ram}")
+        if self.screen:
+              print(f"{self.lg}     NMm  {self.w}dMM  .mmd  `mmm   yMM. {self.lg}dMM  {self.screen}\n"
+                    f"{self.lg}     NMm  {self.w}dMM`  ..`   ...   ydm. {self.lg}dMM  {self.motherboard}")
+        else:
+            print(f"{self.lg}     NMm  {self.w}dMM  .mmd  `mmm   yMM. {self.lg}dMM  {self.motherboard}"
+                  f"{self.lg}     NMm  {self.w}dMM`  ..`   ...   ydm. {self.lg}dMM  ")
+
+        print(f"{self.lg}     hMM- {self.w}+MMd/-------...-:sdds  {self.lg}dMM  \n"
+              f"{self.lg}     -NMm- {self.w}:hNMNNNmdddddddddy/`  {self.lg}dMM  \n"
+              f"{self.lg}      -dMNs-{self.w}``-::::-------.``    {self.lg}dMM  \n"
+              f"{self.lg}       `/dMNmy+/:-------------:/yMMM  \n"
+              f"{self.lg}          ./ydNMMMMMMMMMMMMMMMMMMMMM  \n"
+              f"{self.lg}             \.MMMMMMMMMMMMMMMMMMM    \n"
+              f"{self.lg}                                      ")
         
     def n_a(self):
         print(
