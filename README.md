@@ -12,6 +12,7 @@ Open an issue with your OS, and preferably provide a link to an ascii image of t
 
 ![](https://cdn.discordapp.com/attachments/300089166002388992/306991086134624259/unknown.png)
 ![](https://cdn.discordapp.com/attachments/300089166002388992/306991507410386954/unknown.png)
+![](https://cdn.discordapp.com/attachments/204621105720328193/307021635695673344/unknown.png)
 
 # Requirements
 **Python 3.6 is required for pyFetch**
