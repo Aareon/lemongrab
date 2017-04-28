@@ -102,13 +102,16 @@ class Windows:
     def __init__(self, specs):
       self.white = '\033[1;37;40m'
       self.blue = '\033[0;34;40m'
+      self.red = '\033[0;31;40m'
       self.light_red = '\033[0;1;31m'
+      self.green = '\033[0;32;40m'
+      self.yellow = '\033[1;33;40m'
       self.reset = '\033[0m'
 
       self.system = specs.uname.system
       self.release = specs.uname.release
       self.node = specs.uname.node
-      self.logo = Logos(self.system, self.release)
+      self.logo, logo_name = Logos(self.system, self.release)
 
       self.username = '{0}{1}{2}@{0}{3}{4}'.format(self.light_red, specs.username, self.white, self.node, self.reset)
       self.kernel = '{0}Kernel: {1}{2}{3}'.format(self.light_red, self.white, specs.uname.machine, self.reset)
@@ -127,12 +130,17 @@ class Windows:
       motherboard_name = subprocess.run("wmic baseboard get product", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n\t').split('\n')[2].rstrip()
       self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.light_red, self.reset, motherboard_vendor, motherboard_name)
 
+      if logo_name == 'windows810':
+        self.colors = (self.blue,)
+      else:
+        self.colors = (self.red, self.green, self.blue, self.yellow)
+
 
     def display(self):
       if self.screen:
-        return self.logo.format(self.blue, self.username, self.kernel, self.os, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.screen, self.motherboard)
+        return self.logo.format(*self.colors, self.username, self.kernel, self.os, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.screen, self.motherboard)
       else:
-        return self.logo.format(self.blue, self.username, self.kernel, self.os, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.motherboard, self.screen)
+        return self.logo.format(*self.colors, self.username, self.kernel, self.os, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.motherboard, self.screen)
 
 
 
@@ -161,11 +169,30 @@ def Logos(system, release):
                                    ``\033[0m
 
   """
+  windows7 = """{0}
+
+         ,.=:^!^!t3Z3z.,
+        :tt:::tt333EE3                  
+        Et:::ztt33EEE  {1}@Ee.,      ..,   {4}{0}
+       ;tt:::tt333EE7 {1};EEEEEEttttt33#   {5}{0}
+      :Et:::zt333EEQ. {1}SEEEEEttttt33QL   {6}{0}
+      it::::tt333EEF {1}@EEEEEEttttt33F    {7}{0}
+     ;3=*^```'*4EEV {1}:EEEEEEttttt33@.    {8}{2}
+     ,.=::::it=., ` {1}@EEEEEEtttz33QF     {9}{2}
+    ;::::::::zt33)   {1}'4EEEtttji3P*      {10}{2}
+   :t::::::::tt33.{3}:Z3z..  {1}`` {3},..g.      {11}{2}
+   i::::::::zt33F {3}AEEEtttt::::ztF       {12}{2}
+  ;:::::::::t33V {3};EEEttttt::::t3        {13}{2}
+  E::::::::zt33L {3}@EEEtttt::::z3F        {2}
+ (3=*^```'*4E3) {3};EEEtttt:::::tZ`        {2}
+             ` {3}:EEEEtttt::::z7          {3}
+                 'VEzjt:;;z>*`\033[0m
+  """
   if 'windows' in system.lower():
     if '10' or '8' in release:
-      return windows810
+      return windows810, 'windows810'
   else:
-    return
+    return windows7, 'windows7'
 
 
 if __name__ == '__main__':
