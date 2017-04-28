@@ -3,7 +3,7 @@ import getpass
 import subprocess
 import psutil
 from collections import namedtuple
-from utils import uptime
+import uptime
 
 #os = ('linux', 'windows')
 #system = uname.system

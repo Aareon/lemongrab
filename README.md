@@ -17,16 +17,16 @@ Open an issue with your OS, and preferably provide a link to an ascii image of t
 ![](https://cdn.discordapp.com/attachments/204621105720328193/307021635695673344/unknown.png)
 ![](https://cdn.discordapp.com/attachments/238691918836531202/307239662622081024/unknown.png)
 
-# Requirements
-**Python 3.6 is required for pyFetch**
-
-```py
-python3.6 -m pip install py-cpuinfo
-python3.6 -m pip install psutil
-python3.6 -m pip install screeninfo
-python3.6 -m pip install uptime
-python3.6 -m pip install distro
+# Installation
+**Python 3.6 is required for lemongrab**
 ```
+pip install git+git://github.com/Aareon/lemongrab@master
+```
+
+# Usage
+`python -m lemongrab`
+
+replace `python` with `python3` if you are on linux
 
 License
 ----
