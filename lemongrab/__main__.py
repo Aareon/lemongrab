@@ -104,9 +104,9 @@ class Linux:
       self.logo, logo_name = Logos(self.distribution, self.release)
 
       try:
-        self.packages = subprocess.run("dpkg -l | grep -c '^ii'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
+        packages = subprocess.run("dpkg -l | grep -c '^ii'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
       except:
-        self.packages = 'N/A'
+        packages = None
 
       try:  
         manufacturer_and_name = subprocess.run("grep '' /sys/class/dmi/id/board_vendor && grep '' /sys/class/dmi/id/board_name", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.split('\n')
@@ -125,7 +125,10 @@ class Linux:
       self.kernel = '{0}Kernel: {1}{2} Linux {3}'.format(self.light_red, self.reset, specs.uname.machine, specs.uname.release)
       self.os = '{0}OS: {1}{2}'.format(self.light_red, self.reset, self.distribution)
       self.uptime = '{0}Uptime: {1}{2}'.format(self.light_red, self.reset, specs.uptime)
-      self.packages = '{0}Packages: {1}{2}'.format(self.light_red, self.reset, self.packages)
+
+      self.packages = ''
+      if packages:
+        self.packages = '{0}Packages: {1}{2}'.format(self.light_red, self.reset, self.packages)
       self.shell = '{0}Shell: {1}{2}'.format(self.light_red, self.reset, specs.shell)
       self.hdd = '{0}HDD: {1}{2} / {3} (Free/Total)'.format(self.light_red, self.reset, specs.disk_free, specs.disk_total)
       self.cpu = '{0}CPU: {1}{2} @ {3}'.format(self.light_red, self.reset, specs.brand, specs.hz)
