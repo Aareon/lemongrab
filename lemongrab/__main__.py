@@ -114,8 +114,8 @@ class Linux:
       except:
         try:
           manufacturer_and_name = subprocess.run("dmidecode | grep -A3 '^System Information'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.split('\n')
-          self.motherboard_vendor = manufacturer_and_name[1].strip('Manufacturer: ')
-          self.motherboard_name = manufacturer_and_name[2].strip('Product Name: ')
+          self.motherboard_vendor = manufacturer_and_name[1].strip('\tManufacturer: ')
+          self.motherboard_name = manufacturer_and_name[2].strip('\tProduct Name: ')
           if self.motherboard_vendor == 'System manufacturer' and self.motherboard_name == 'System Product Name':
             self.motherboard_vendor, self.motherboard_name = None, None
         except:
