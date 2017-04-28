@@ -42,7 +42,7 @@ class LogoMaker:
         self.y = '\033[1;33;40m'
         self.r = '\033[0;31;40m'
         self.lr = '\033[0;1;31m'
-        self.lg = '\033[1;32;40m'
+        self.lg = '\033[1;32;0m'
         self.g = '\033[0;32;40m'
         self.b = '\033[0;34;40m'
         self.xx = '\033[0m'
@@ -200,8 +200,10 @@ class LogoMaker:
 class Computer:
     def __init__(self):
         self.pool = ThreadPool()
-        self.uname = platform.uname()
-        self.username = getpass.getuser()
+        uname_future = self.pool.apply_async(platform.uname)
+        self.uname = uname_future.get()
+        username_future = self.pool.apply_async(getpass.getuser)
+        self.username = username_future.get()
         self.uptime = ddhhmmss(int(uptime()))
         self.cpu = cpuinfo.get_cpu_info()
         self.brand = self.cpu['brand'].rstrip()
