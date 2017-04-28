@@ -129,7 +129,7 @@ class LogoMaker:
             print(f"{self.b}  llllllllllllll  lllllllllllllllllll   {self.screen}\n"
                   f"                                        {self.motherboard}")
         else:
-            print(f"{self.b}  llllllllllllll  lllllllllllllllllll   {self.motherboard}\n")
+            print(f"{self.b}  llllllllllllll  lllllllllllllllllll   {self.motherboard}")
 
         print(f"{self.b}  llllllllllllll  lllllllllllllllllll\n"
               f"{self.b}  llllllllllllll  lllllllllllllllllll\n"
