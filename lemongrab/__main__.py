@@ -112,7 +112,7 @@ class Linux:
         manufacturer_and_name = subprocess.run("grep '' /sys/class/dmi/id/board_vendor && grep '' /sys/class/dmi/id/board_name", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.split('\n')
         self.motherboard_vendor, self.motherboard_name = manufacturer_and_name[0], manufacturer_and_name[1]
       except:
-        self.motherboard_vendor, self.motherboard_name = 'N/A', 'N/A'
+        self.motherboard_vendor, self.motherboard_name = None, None
 
       self.username = '{0}{1}{2}@{0}{3}{4}'.format(self.light_red, specs.username, self.white, self.node, self.reset)
       self.kernel = '{0}Kernel: {1}{2} Linux {3}'.format(self.light_red, self.reset, specs.uname.machine, specs.uname.release)
@@ -128,7 +128,9 @@ class Linux:
       if specs.screen:
         self.screen = '{0}Resolution: {1}{2}'.format(self.light_red, self.reset, specs.screen)
 
-      self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.light_red, self.reset, self.motherboard_vendor, self.motherboard_name)
+      self.motherboard = ''
+      if self.motherboard_vendor and self.motherboard_vendor:
+        self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.light_red, self.reset, self.motherboard_vendor, self.motherboard_name)
       if logo_name == 'ubuntu':
         self.colors = (self.light_red, self.white, self.yellow)
 
