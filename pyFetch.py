@@ -1,11 +1,14 @@
 import platform
 import getpass
 import subprocess
-import cpuinfo
 import psutil
-from multiprocessing.pool import ThreadPool
-from screeninfo import get_monitors
-from uptime import uptime
+from collections import namedtuple
+from utils import uptime
+
+#os = ('linux', 'windows')
+#system = uname.system
+#name = ('windows 10/8', linux_distribution)
+#distro = ('Microsoft Windows 10 Home (v10.0.15063) 64-bit', 'Ubuntu 16.04 Xenial Xerus')
 
 def humanbytes(B):
    """Return the given bytes as a human friendly KB, MB, GB, or TB string"""
@@ -35,230 +38,143 @@ def ddhhmmss(seconds):
     minute = seconds // 60
     return "%d days %d hours %d minutes" % (day, hour, minute)
 
-class LogoMaker:
+class OS:
     def __init__(self):
-        self.computer = Computer()
-        self.w = '\033[1;37;40m'
-        self.y = '\033[1;33;40m'
-        self.r = '\033[0;31;40m'
-        self.lr = '\033[0;1;31m'
-        self.lg = '\033[1;32;0m'
-        self.g = '\033[0;32;40m'
-        self.b = '\033[0;34;40m'
-        self.xx = '\033[0m'
+        self.uname = platform.uname()
+        self.username = getpass.getuser()
+        self.uptime = ddhhmmss(int(uptime.uptime()))
 
-        self.username = f'{self.lr}{self.computer.username}{self.w}@{self.lr}{self.computer.uname.node}{self.xx}'
-        self.kernel = f'{self.lr}Kernel: {self.xx}{self.computer.uname.machine}'
-        
-        if 'linux' in self.computer.uname.system.lower():
-            self.os = f'{self.lr}OS: {self.xx}{self.computer.os}'
-            self.kernel = f'{self.lr}Kernel: {self.xx}{self.computer.uname.machine} Linux {self.computer.uname.release}'
+        if self.check_cpu_info():
+            cpu = self.cpuinfo.get_cpu_info()
+            self.brand = cpu['brand'].rstrip()
+            self.hz = cpu['hz_actual']
         else:
-            self.os = f'{self.lr}OS: {self.xx}{self.computer.uname.system} {self.computer.uname.release}'
-        self.uptime = f'{self.lr}Uptime: {self.xx}{self.computer.uptime}'
+            self.brand = platform.processor()
+            self.hz = str(psutil.cpu_freq().max/1000) + ' GHz'
 
-        if 'linux' in self.computer.uname.system.lower():
-            self.packages = f'{self.lr}Packages: {self.xx}{self.computer.packages}'
+        mem = psutil.virtual_memory()
+        disk = psutil.disk_usage('.')
 
-        self.shell = f'{self.lr}Shell: {self.xx}{self.computer.shell}'
-        self.hdd = f'{self.lr}HDD: {self.xx}{self.computer.disk_free} / {self.computer.disk_total} (Free/Total)'
-        self.cpu = f'{self.lr}CPU: {self.xx}{self.computer.brand} @ {self.computer.hz}'
-        self.ram = f'{self.lr}RAM: {self.xx}{self.computer.mem_used} / {self.computer.mem_total} (Used/Total)'
-
-        self.screen = None
-
-        if self.computer.screen:
-            self.screen = f'{self.lr}Resolution: {self.xx}{self.computer.screen}'
-
-        self.motherboard = f'{self.lr}Motherboard: {self.xx}{self.computer.motherboard_vendor} {self.computer.motherboard_name}'
-
-    def display(self, default=False):
-        if not default:
-            if 'ubuntu' in self.computer.os.lower():
-                self.ubuntu()
-            elif self.computer.os == '10/8':
-                self.win10_8()
-            elif self.computer.os == 'win':
-                self.old_win()
-            elif 'mint' in self.computer.os.lower():
-                self.mint()
-            else:
-                self.n_a()
-        else:
-            if default == 'ubuntu':
-                self.ubuntu()
-            elif default == '10/8':
-                self.win10_8()
-            elif default == 'win':
-                self.old_win()
-            elif default == 'mint':
-                self.mint()
-            else:
-                self.n_a()
-
-    def ubuntu(self):
-        print(f"{self.w}              .-.                                                              {self.username}\n"
-              f"{self.y}        .-'``{self.w}(|||)                                                             {self.os}\n"
-              f"{self.y}     ,`\ \    {self.w}`-`{self.y}.                 88                         88               {self.kernel}\n"
-              f"{self.y}    /   \ '``-.   `                88                         88               {self.uptime}\n"
-              f"{self.y}  .-.  ,       `___:      88   88  88,888,  88   88  ,88888, 88888  88   88    {self.packages}\n"
-              f"{self.y} (:::) :       {self.w} ___{self.y}       88   88  88   88  88   88  88   88  88    88   88    {self.shell}\n"
-              f"{self.y}  `-`  `       {self.w},   :{self.y}      88   88  88   88  88   88  88   88  88    88   88    {self.hdd}\n"
-              f"{self.y}    \   /{self.w} ,..-`   ,{self.y}       88   88  88   88  88   88  88   88  88    88   88    {self.cpu}\n"
-              f"{self.y}     `./ {self.w}/    {self.y}.-.{self.w}`{self.y}        '88888'  '88888'  '88888'  88   88  '8888 '88888'    {self.ram}")
-        if self.screen:
-            print(
-                f"{self.w}        `-..-{self.y}(   )                                                                          {self.screen}")
-            print(
-                f"{self.y}              `-`                                                                                           {self.motherboard}")
-        else:
-            print(
-                f"{self.w}        `-..-{self.y}(   )                                                             {self.motherboard}")
-        print(f"{self.y}              `-`{self.xx}")
-        
-    def win10_8(self):
-        print(f"{self.b}                                  ..,   {self.username}\n"
-              f"{self.b}                      ....,,:;+ccllll   {self.os}\n"
-              f"{self.b}        ...,,+:;  cllllllllllllllllll   {self.kernel}\n"
-              f"{self.b}  ,cclllllllllll  lllllllllllllllllll   {self.uptime}\n"
-              f"{self.b}  llllllllllllll  lllllllllllllllllll   {self.shell}\n"
-              f"{self.b}  llllllllllllll  lllllllllllllllllll   {self.hdd}\n"
-              f"{self.b}  llllllllllllll  lllllllllllllllllll   {self.cpu}\n"
-              f"{self.b}  llllllllllllll  lllllllllllllllllll   {self.ram}")
-        if self.screen:
-            print(f"{self.b}  llllllllllllll  lllllllllllllllllll   {self.screen}\n"
-                  f"                                        {self.motherboard}")
-        else:
-            print(f"{self.b}  llllllllllllll  lllllllllllllllllll   {self.motherboard}\n")
-
-        print(f"{self.b}  llllllllllllll  lllllllllllllllllll\n"
-              f"{self.b}  llllllllllllll  lllllllllllllllllll\n"
-              f"{self.b}  llllllllllllll  lllllllllllllllllll\n"
-              f"{self.b}  llllllllllllll  lllllllllllllllllll\n"
-              f"{self.b}  llllllllllllll  lllllllllllllllllll\n"
-              f"{self.b}  llllllllllllll  lllllllllllllllllll\n"
-              f"{self.b}  `'ccllllllllll  lllllllllllllllllll\n"
-              f"{self.b}           `'""*::  :ccllllllllllllllll\n"
-              f"{self.b}                        ````''\"*::cll\n"
-              f"{self.b}                                   ``")
-        
-    def old_win(self):
-        print(f"{self.lr}         ,.=:^!^!t3Z3z.,\n"
-              f"{self.lr}        :tt:::tt333EE3                  {self.username}\n"
-              f"{self.lr}        Et:::ztt33EEE  {self.g}@Ee.,      ..,\n"
-              f"{self.lr}       ;tt:::tt333EE7 {self.g};EEEEEEttttt33#   {self.os}\n"
-              f"{self.lr}      :Et:::zt333EEQ. {self.g}SEEEEEttttt33QL   {self.kernel}\n"
-              f"{self.lr}      it::::tt333EEF {self.g}@EEEEEEttttt33F    {self.uptime}\n"
-              f"{self.lr}     ;3=*^```'*4EEV {self.g}:EEEEEEttttt33@.    {self.shell}\n"
-              f"{self.b}     ,.=::::it=., {self.lr}` {self.g}@EEEEEEtttz33QF     {self.hdd}\n"
-              f"{self.b}    ;::::::::zt33)   {self.g}'4EEEtttji3P*      {self.cpu}\n"
-              f"{self.b}   :t::::::::tt33.{self.y}:Z3z..  {self.g}`` {self.y},..g.      {self.ram}")
-        if self.screen:
-            print(f"{self.b}   i::::::::zt33F {self.y}AEEEtttt::::ztF       {self.screen}\n"
-                  f"{self.b}  ;:::::::::t33V {self.y};EEEttttt::::t3        {self.motherboard}")
-        else:
-            print(f"{self.b}   i::::::::zt33F {self.y}AEEEtttt::::ztF       \n"
-                  f"{self.b}  ;:::::::::t33V {self.y};EEEttttt::::t3")
-        print(f"{self.b}  E::::::::zt33L {self.y}@EEEtttt::::z3F        \n"
-              f"{self.b} (3=*^```'*4E3) {self.y};EEEtttt:::::tZ`        \n"
-              f"{self.b}             ` {self.y}:EEEEtttt::::z7          \n"
-              f"{self.y}                 'VEzjt:;;z>*`        ")
-
-    def mint(self):
-        print(f"                                      {self.username}\n"
-              f"{self.lg} MMMMMMMMMMMMMMMMMMMMMMMMMmds+.       \n"
-              f"{self.lg} MMm----::-://////////////oymNMd+`    {self.os}\n"
-              f"{self.lg} MMd      {self.w}/++                {self.lg}-sNMd:   {self.kernel}\n"
-              f"{self.lg} MMNso/` {self.w}dMM    `.::-. .-::.` {self.lg}.hMN:   {self.uptime}\n"
-              f"{self.lg} ddddMMh  {self.w}dMM   :hNMNMNhNMNMNh: {self.lg}`NMm  {self.shell}\n"
-              f"{self.lg}     NMm  {self.w}dMM  .NMN/-+MMM+-/NMN` {self.lg}dMM  {self.hdd}\n"
-              f"{self.lg}     NMm  {self.w}dMM  -MMm  `MMM   dMM. {self.lg}dMM  {self.cpu}\n"
-              f"{self.lg}     NMm  {self.w}dMM  -MMm  `MMM   dMM. {self.lg}dMM  {self.ram}")
-        if self.screen:
-              print(f"{self.lg}     NMm  {self.w}dMM  .mmd  `mmm   yMM. {self.lg}dMM  {self.screen}\n"
-                    f"{self.lg}     NMm  {self.w}dMM`  ..`   ...   ydm. {self.lg}dMM  {self.motherboard}")
-        else:
-            print(f"{self.lg}     NMm  {self.w}dMM  .mmd  `mmm   yMM. {self.lg}dMM  {self.motherboard}\n"
-                  f"{self.lg}     NMm  {self.w}dMM`  ..`   ...   ydm. {self.lg}dMM  ")
-
-        print(f"{self.lg}     hMM- {self.w}+MMd/-------...-:sdds  {self.lg}dMM  \n"
-              f"{self.lg}     -NMm- {self.w}:hNMNNNmdddddddddy/`  {self.lg}dMM  \n"
-              f"{self.lg}      -dMNs-{self.w}``-::::-------.``    {self.lg}dMM  \n"
-              f"{self.lg}       `/dMNmy+/:-------------:/yMMM  \n"
-              f"{self.lg}          ./ydNMMMMMMMMMMMMMMMMMMMMM  \n"
-              f"{self.lg}             \.MMMMMMMMMMMMMMMMMMM    \n"
-              f"{self.lg}                                      {self.xx}")
-        
-    def n_a(self):
-        print(
-            f"{self.username}\n{self.os}\n{self.kernel}\n{self.uptime}\n{self.shell}\n{self.hdd}\n{self.cpu}\n{self.ram}")
-        if self.screen:
-            print(self.screen)
-        print(
-            f"{self.motherboard}\nThis OS does not have a logo added yet. Post an issue on the GitHub repository to request support")
-
-class Computer:
-    def __init__(self):
-        self.pool = ThreadPool()
-        uname_future = self.pool.apply_async(platform.uname)
-        self.uname = uname_future.get()
-        username_future = self.pool.apply_async(getpass.getuser)
-        self.username = username_future.get()
-        self.uptime = ddhhmmss(int(uptime()))
-        self.cpu = cpuinfo.get_cpu_info()
-        self.brand = self.cpu['brand'].rstrip()
-        self.hz = self.cpu['hz_actual']
-        mem_future = self.pool.apply_async(psutil.virtual_memory)
-        mem = mem_future.get()
-        self.mem_total = humanbytes(mem.total)
         self.mem_used = humanbytes(mem.used)
-        disk_future = self.pool.apply_async(psutil.disk_usage, ('.',))
-        disk = disk_future.get()
+        self.mem_total = humanbytes(mem.total)
+
         self.disk_free = humanbytes(disk.free)
         self.disk_total = humanbytes(disk.total)
+
         self.screen = self.get_screen()
-
-        if 'linux' in self.uname.system.lower():
-            import distro
-            distribution = ''
-            for item in distro.linux_distribution():
-                distribution += ' ' + item
-                self.os = distribution
-        elif 'windows' in self.uname.system.lower():
-            if '10' or '8' in self.uname.release:
-                self.os = '10/8'
-            else:
-                self.os = 'win'
-        else:
-            self.os = 'nothing'
-
-
-        system_lower = self.uname.system.lower()
-
-        if 'linux' in system_lower:
-            self.packages = self.get_packages()
-            manufacturer_and_name = subprocess.run("grep '' /sys/class/dmi/id/board_vendor && grep '' /sys/class/dmi/id/board_name", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.split('\n')
-            self.motherboard_vendor, self.motherboard_name = manufacturer_and_name[0], manufacturer_and_name[1]
-        else:
-            self.motherboard_vendor = subprocess.run("wmic baseboard get manufacturer", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.split('\n')[2].rstrip()
-            self.motherboard_name = subprocess.run("wmic baseboard get product", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n\t').split('\n')[2].rstrip()
-
 
         try:
             self.shell = subprocess.run("bash --version", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n').split('(')[0]
         except:
             self.shell = 'N/A'
 
+    def fetch_specs(self):
+        Specs = namedtuple('Specs', 'uname username uptime brand hz shell mem_used mem_total disk_free disk_total screen')
+        specs = Specs(uname=self.uname, username=self.username, uptime=self.uptime, brand=self.brand, hz=self.hz, shell=self.shell, mem_used=self.mem_used,
+                      mem_total=self.mem_total, disk_free=self.disk_free, disk_total=self.disk_total, screen=self.screen)
+        return specs
+
     def get_screen(self):
         try:
-            screen_future = self.pool.apply_async(get_monitors)
-            return str(screen_future.get()[0]).strip('monitor()').split('+')[0]
+            from screeninfo import get_monitors
+            screen = get_monitors()
+            return str(screen[0]).strip('monitor()').split('+')[0]
         except:
             return None
 
-    def get_packages(self):
-        return subprocess.run("dpkg -l | grep -c '^ii'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
+    def check_cpu_info(self):
+        try:
+            self.cpuinfo = __import__('cpuinfo')
+            return True
+        except:
+            return False
+
+
+class Linux:
+    def __init__(self):
+        import distro
+        self.distribution = ''
+        for item in distro.linux_distribution():
+            self.distribution += ' ' + item
+
+
+class Windows:
+    def __init__(self, specs):
+      self.white = '\033[1;37;40m'
+      self.blue = '\033[0;34;40m'
+      self.light_red = '\033[0;1;31m'
+      self.reset = '\033[0m'
+
+      self.system = specs.uname.system
+      self.release = specs.uname.release
+      self.node = specs.uname.node
+      self.logo = Logos(self.system, self.release)
+
+      self.username = '{0}{1}{2}@{0}{3}{4}'.format(self.light_red, specs.username, self.white, self.node, self.reset)
+      self.kernel = '{0}Kernel: {1}{2}{3}'.format(self.light_red, self.white, specs.uname.machine, self.reset)
+      self.os = '{0}OS: {1}{2} {3}'.format(self.light_red, self.reset, specs.uname.system, specs.uname.release)
+      self.uptime = '{0}Uptime: {1}{2}'.format(self.light_red, self.reset, specs.uptime)
+      self.shell = '{0}Shell: {1}{2}'.format(self.light_red, self.reset, specs.shell)
+      self.hdd = '{0}HDD: {1}{2} / {3} (Free/Total)'.format(self.light_red, self.reset, specs.disk_free, specs.disk_total)
+      self.cpu = '{0}CPU: {1}{2} @ {3}'.format(self.light_red, self.reset, specs.brand, specs.hz)
+      self.ram = '{0}RAM: {1}{2} / {3} (Used/Total)'.format(self.light_red, self.reset, specs.mem_used, specs.mem_total)
+
+      self.screen = ''
+      if specs.screen:
+        self.screen = '{0}Resolution: {1}{2}'.format(self.light_red, self.reset, specs.screen)
+
+      motherboard_vendor = subprocess.run("wmic baseboard get manufacturer", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.split('\n')[2].rstrip()
+      motherboard_name = subprocess.run("wmic baseboard get product", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n\t').split('\n')[2].rstrip()
+      self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.light_red, self.reset, motherboard_vendor, motherboard_name)
+
+
+    def display(self):
+      if self.screen:
+        return self.logo.format(self.blue, self.username, self.kernel, self.os, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.screen, self.motherboard)
+      else:
+        return self.logo.format(self.blue, self.username, self.kernel, self.os, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.motherboard, self.screen)
+
+
+
+def Logos(system, release):
+  # ---------------------- LOGOS START ----------------------------
+  windows810 = """{0}
+                                  ..,  {1}{0}
+                      ....,,:;+ccllll  {2}{0}
+        ...,,+:;  cllllllllllllllllll  {3}{0}
+  ,cclllllllllll  lllllllllllllllllll  {4}{0}
+  llllllllllllll  lllllllllllllllllll  {5}{0}
+  llllllllllllll  lllllllllllllllllll  {6}{0}
+  llllllllllllll  lllllllllllllllllll  {7}{0}
+  llllllllllllll  lllllllllllllllllll  {8}{0}
+  llllllllllllll  lllllllllllllllllll  {9}{0}
+                                       {10}{0}
+  llllllllllllll  lllllllllllllllllll
+  llllllllllllll  lllllllllllllllllll
+  llllllllllllll  lllllllllllllllllll
+  llllllllllllll  lllllllllllllllllll
+  llllllllllllll  lllllllllllllllllll
+  llllllllllllll  lllllllllllllllllll
+  `'ccllllllllll  lllllllllllllllllll
+         `'""*::  :ccllllllllllllllll
+                       ````''\"*::clll
+                                   ``\033[0m
+
+  """
+  if 'windows' in system.lower():
+    if '10' or '8' in release:
+      return windows810
+  else:
+    return
+
 
 if __name__ == '__main__':
-    make_logo = LogoMaker()
-    make_logo.display()
+    computer = OS()
+    specs = computer.fetch_specs()
+    if 'Windows' in specs.uname:
+        logo = Windows(specs)
+    elif 'Linux' in specs.uname:
+        linux = Linux(specs)
+    else:
+        no_logo = No_Logo(specs)
+    print(logo.display())
