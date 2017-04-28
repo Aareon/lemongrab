@@ -25,6 +25,7 @@ python3.6 -m pip install py-cpuinfo
 python3.6 -m pip install psutil
 python3.6 -m pip install screeninfo
 python3.6 -m pip install uptime
+python3.6 -m pip install distro
 ```
 
 License
