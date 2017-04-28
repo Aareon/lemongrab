@@ -1,4 +1,4 @@
-# pyFetch
+# lemongrab
 An attempt at a cross-platform version of the popular "screenFetch" script
 
 #### Supports
@@ -17,16 +17,18 @@ Open an issue with your OS, and preferably provide a link to an ascii image of t
 ![](https://cdn.discordapp.com/attachments/204621105720328193/307021635695673344/unknown.png)
 ![](https://cdn.discordapp.com/attachments/238691918836531202/307239662622081024/unknown.png)
 
-# Requirements
-**Python 3.6 is required for pyFetch**
+# Installation
+**Python 3.6 is required for lemongrab**
+git is assumed to be install, though you can download and extract the zip too (you must be in the directory above the extracted folder)
 
-```py
-python3.6 -m pip install py-cpuinfo
-python3.6 -m pip install psutil
-python3.6 -m pip install screeninfo
-python3.6 -m pip install uptime
-python3.6 -m pip install distro
 ```
+git clone https://github.com/Aareon/lemongrab.git
+pip install -e lemongrab
+```
+
+# Usage
+`python -m lemongrab`
+replace `python` with `python3` if you are on linux
 
 License
 ----
