@@ -19,11 +19,8 @@ Open an issue with your OS, and preferably provide a link to an ascii image of t
 
 # Installation
 **Python 3.6 is required for lemongrab**
-git is assumed to be install, though you can download and extract the zip too (you must be in the directory above the extracted folder)
-
 ```
-git clone https://github.com/Aareon/lemongrab.git
-pip install -e lemongrab
+pip install git+git://github.com/Aareon/lemongrab@master
 ```
 
 # Usage
