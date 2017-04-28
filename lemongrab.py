@@ -5,10 +5,6 @@ import psutil
 from collections import namedtuple
 from utils import uptime
 
-#os = ('linux', 'windows')
-#system = uname.system
-#name = ('windows 10/8', linux_distribution)
-#distro = ('Microsoft Windows 10 Home (v10.0.15063) 64-bit', 'Ubuntu 16.04 Xenial Xerus')
 
 def humanbytes(B):
    """Return the given bytes as a human friendly KB, MB, GB, or TB string"""
