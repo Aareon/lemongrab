@@ -2,13 +2,9 @@ import platform
 import getpass
 import subprocess
 import psutil
-from collections import namedtuple
 import uptime
+from collections import namedtuple
 
-#os = ('linux', 'windows')
-#system = uname.system
-#name = ('windows 10/8', linux_distribution)
-#distro = ('Microsoft Windows 10 Home (v10.0.15063) 64-bit', 'Ubuntu 16.04 Xenial Xerus')
 
 def humanbytes(B):
    """Return the given bytes as a human friendly KB, MB, GB, or TB string"""
@@ -91,11 +87,59 @@ class OS:
 
 
 class Linux:
-    def __init__(self):
-        import distro
-        self.distribution = ''
-        for item in distro.linux_distribution():
-            self.distribution += ' ' + item
+    def __init__(self, specs):
+      self.white = '\033[1;37;40m'
+      self.light_red = '\033[0;1;31m'
+      self.yellow = '\033[1;33;40m'
+      self.reset = '\033[0m'
+
+      import distro
+      self.distribution = ''
+      for item in distro.linux_distribution():
+          self.distribution += ' ' + item
+
+      self.system = specs.uname.system
+      self.release = specs.uname.release
+      self.node = specs.uname.node
+      self.logo, logo_name = Logos(self.distribution, self.release)
+
+      try:
+        self.packages = subprocess.run("dpkg -l | grep -c '^ii'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
+      except:
+        self.packages = 'N/A'
+
+      try:  
+        manufacturer_and_name = subprocess.run("grep '' /sys/class/dmi/id/board_vendor && grep '' /sys/class/dmi/id/board_name", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.split('\n')
+        self.motherboard_vendor, self.motherboard_name = manufacturer_and_name[0], manufacturer_and_name[1]
+      except:
+        self.motherboard_vendor, self.motherboard_name = 'N/A'
+
+      self.username = '{0}{1}{2}@{0}{3}{4}'.format(self.light_red, specs.username, self.white, self.node, self.reset)
+      self.kernel = '{0}Kernel: {1}{2} Linux {3}'.format(self.light_red, self.reset, specs.uname.machine, specs.uname.release)
+      self.os = '{0}OS: {1}{2}'.format(self.light_red, self.reset, self.distribution)
+      self.uptime = '{0}Uptime: {1}{2}'.format(self.light_red, self.reset, specs.uptime)
+      self.packages = '{0}Packages: {1}{2}'.format(self.light_red, self.reset, self.packages)
+      self.shell = '{0}Shell: {1}{2}'.format(self.light_red, self.reset, specs.shell)
+      self.hdd = '{0}HDD: {1}{2} / {3} (Free/Total)'.format(self.light_red, self.reset, specs.disk_free, specs.disk_total)
+      self.cpu = '{0}CPU: {1}{2} @ {3}'.format(self.light_red, self.reset, specs.brand, specs.hz)
+      self.ram = '{0}RAM: {1}{2} / {3} (Used/Total)'.format(self.light_red, self.reset, specs.mem_used, specs.mem_total)
+
+      self.screen = ''
+      if specs.screen:
+        self.screen = '{0}Resolution: {1}{2}'.format(self.light_red, self.reset, specs.screen)
+
+      self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.light_red, self.reset, self.motherboard_vendor, self.motherboard_name)
+      if logo_name == 'ubuntu':
+        self.colors = (self.light_red, self.white, self.yellow)
+
+
+    def display(self):
+      if self.screen:
+        return self.logo.format(*self.colors, self.username, self.os, self.kernel, self.uptime, self.packages, self.shell, self.hdd, self.cpu, self.ram, self.screen, self.motherboard)
+      else:
+        return self.logo.format(*self.colors, self.username, self.os, self.kernel, self.uptime, self.packages, self.shell, self.hdd, self.cpu, self.ram, self.motherboard, self.screen)
+
+
 
 
 class Windows:
@@ -113,8 +157,8 @@ class Windows:
       self.node = specs.uname.node
       self.logo, logo_name = Logos(self.system, self.release)
 
-      self.username = '{0}{1}{2}@{0}{3}{4}'.format(self.light_red, specs.username, self.white, self.node, self.reset)
-      self.kernel = '{0}Kernel: {1}{2}{3}'.format(self.light_red, self.white, specs.uname.machine, self.reset)
+      self.username = '{0}{1}{2}@{0}{3}'.format(self.light_red, specs.username, self.white, self.node)
+      self.kernel = '{0}Kernel: {1}{2} {3}'.format(self.light_red, self.reset, specs.uname.machine, specs.uname.release)
       self.os = '{0}OS: {1}{2} {3}'.format(self.light_red, self.reset, specs.uname.system, specs.uname.release)
       self.uptime = '{0}Uptime: {1}{2}'.format(self.light_red, self.reset, specs.uptime)
       self.shell = '{0}Shell: {1}{2}'.format(self.light_red, self.reset, specs.shell)
@@ -138,9 +182,9 @@ class Windows:
 
     def display(self):
       if self.screen:
-        return self.logo.format(*self.colors, self.username, self.kernel, self.os, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.screen, self.motherboard)
+        return self.logo.format(*self.colors, self.username, self.os, self.kernel, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.screen, self.motherboard)
       else:
-        return self.logo.format(*self.colors, self.username, self.kernel, self.os, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.motherboard, self.screen)
+        return self.logo.format(*self.colors, self.username, self.os, self.kernel, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.motherboard, self.screen)
 
 
 
@@ -188,11 +232,36 @@ def Logos(system, release):
              ` {3}:EEEEtttt::::z7          {3}
                  'VEzjt:;;z>*`\033[0m
   """
+
+  ubuntu = """{0}
+                          ./+o+-       {3}{1}
+                  yyyyy- {0}-yyyyyy+      {4}{1}
+               ://+//////{0}-yyyyyyo      {5}{2}
+           .++ {1}.:/++++++/-{0}.+sss/`      {6}{2}
+         .:++o:  {1}/++++++++/:--:/-      {7}{2}
+        o:+o+:++.{1}`..```.-/oo+++++/     {8}{2}
+       .:+o:+o/.          {1}`+sssoo+/    {9}{1}
+  .++/+:{2}+oo+o:`             {1}/sssooo.   {10}{1}
+ /+++//+:{2}`oo+o               {1}/::--:.   {11}{1}
+ \+/+o+++{2}`o++o               {0}++////.   {12}{1}
+  .++.o+{2}++oo+:`             {0}/dddhhh.   {13}{2}
+       .+.o+oo:.          {0}`oddhhhh+    {2}
+        \+.++o+o`{0}`-````.:ohdhhhhh+    {2}
+         `:o+++ {0}`ohhhhhhhhyo++os:    {2}
+           .o:{0}`.syhhhhhhh/{2}.oo++o`       {0}
+               /osyyyyyyo{2}++ooo+++/       {2}
+                   ````` {2}+oo+++o\:
+                          `oo++.\033[0m
+
+  """
+
   if 'windows' in system.lower():
     if '10' or '8' in release:
       return windows810, 'windows810'
-  else:
-    return windows7, 'windows7'
+    else:
+      return windows7, 'windows7'
+  elif 'ubuntu' in system.lower():
+    return ubuntu, 'ubuntu'
 
 
 if __name__ == '__main__':
@@ -201,7 +270,7 @@ if __name__ == '__main__':
     if 'Windows' in specs.uname:
         logo = Windows(specs)
     elif 'Linux' in specs.uname:
-        linux = Linux(specs)
+        logo = Linux(specs)
     else:
-        no_logo = No_Logo(specs)
+        logo = No_Logo(specs)
     print(logo.display())
