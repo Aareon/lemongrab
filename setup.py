@@ -9,7 +9,7 @@ setup(
     name='lemongrab',
     version='0.1dev',
     author = "Aareon <https://github.com/Aareon>",
-    packages=['lemongrab','logos'],
+    packages=['lemongrab',],
     license='MIT License',
     long_description=open('README.md').read(),
     install_requires=[
@@ -24,5 +24,5 @@ setup(
                 'lemongrab = lemongrab.__main__:main'
             ]
         },
-    
+    include_package_data=True,
 )
