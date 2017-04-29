@@ -33,6 +33,7 @@ def ddhhmmss(seconds):
     seconds %= 3600
     minute = seconds // 60
     return "%d days %d hours %d minutes" % (day, hour, minute)
+    
 
 class OS:
     def __init__(self):
@@ -59,16 +60,22 @@ class OS:
 
         self.screen = self.get_screen()
 
+        self.shell = self.get_shell()
+
+
+    def get_shell(self):
         try:
             self.shell = subprocess.run("bash --version", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n').split('(')[0]
         except:
-            self.shell = 'N/A'
+            self.shell = None
+
 
     def fetch_specs(self):
         Specs = namedtuple('Specs', 'uname username uptime brand hz shell mem_used mem_total disk_free disk_total screen')
         specs = Specs(uname=self.uname, username=self.username, uptime=self.uptime, brand=self.brand, hz=self.hz, shell=self.shell, mem_used=self.mem_used,
                       mem_total=self.mem_total, disk_free=self.disk_free, disk_total=self.disk_total, screen=self.screen)
         return specs
+
 
     def get_screen(self):
         try:
@@ -88,38 +95,23 @@ class OS:
 
 class Linux:
     def __init__(self, specs):
+      """Set arbitrary strings for attaching to the logo,
+       maybe even fuck something up!"""
       self.white = '\033[1;37;40m'
       self.light_red = '\033[0;1;31m'
       self.yellow = '\033[1;33;40m'
       self.reset = '\033[0m'
 
-      import distro
-      self.distribution = ''
-      for item in distro.linux_distribution():
-          self.distribution += ' ' + item
+      self.distribution = self.get_distro()
 
       self.system = specs.uname.system
       self.release = specs.uname.release
       self.node = specs.uname.node
       self.logo, logo_name = Logos(self.distribution, self.release)
 
-      try:
-        packages = subprocess.run("dpkg -l | grep -c '^ii'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
-      except:
-        packages = None
+      packages = self.get_packages()
 
-      try:  
-        manufacturer_and_name = subprocess.run("grep '' /sys/class/dmi/id/board_vendor && grep '' /sys/class/dmi/id/board_name", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.split('\n')
-        self.motherboard_vendor, self.motherboard_name = manufacturer_and_name[0], manufacturer_and_name[1]
-      except:
-        try:
-          manufacturer_and_name = subprocess.run("dmidecode | grep -A3 '^System Information'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.split('\n')
-          self.motherboard_vendor = manufacturer_and_name[1].strip('\tManufacturer: ')
-          self.motherboard_name = manufacturer_and_name[2].strip('\tProduct Name: ')
-          if self.motherboard_vendor == 'System manufacturer' and self.motherboard_name == 'System Product Name':
-            self.motherboard_vendor, self.motherboard_name = None, None
-        except:
-          self.motherboard_vendor, self.motherboard_name = None, None
+      self.motherboard_vendor, self.motherboard_name = self.get_motherboard()
 
       self.username = '{0}{1}{2}@{0}{3}{4}'.format(self.light_red, specs.username, self.white, self.node, self.reset)
       self.kernel = '{0}Kernel: {1}{2} Linux {3}'.format(self.light_red, self.reset, specs.uname.machine, specs.uname.release)
@@ -128,7 +120,8 @@ class Linux:
 
       self.packages = ''
       if packages:
-        self.packages = '{0}Packages: {1}{2}'.format(self.light_red, self.reset, self.packages)
+        self.packages = '{0}Packages: {1}{2}'.format(self.light_red, self.reset, packages)
+
       self.shell = '{0}Shell: {1}{2}'.format(self.light_red, self.reset, specs.shell)
       self.hdd = '{0}HDD: {1}{2} / {3} (Free/Total)'.format(self.light_red, self.reset, specs.disk_free, specs.disk_total)
       self.cpu = '{0}CPU: {1}{2} @ {3}'.format(self.light_red, self.reset, specs.brand, specs.hz)
@@ -141,17 +134,66 @@ class Linux:
       self.motherboard = ''
       if self.motherboard_vendor and self.motherboard_vendor:
         self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.light_red, self.reset, self.motherboard_vendor, self.motherboard_name)
-      if logo_name == 'ubuntu':
-        self.colors = (self.light_red, self.white, self.yellow)
+
+
+        self.colors = self.distro_colors(logo_name)
+
+
+    def distro_colors(self, logo_name):
+      color_dict = {'ubuntu': (self.light_red, self.white, self.yellow)}
+      return color_dict.get(logo_name, (self.white,))
+
+
+    def get_distro(self):
+      """Just get the name of the distro, if I can"""
+      import distro
+      distribution = ''
+      for item in distro.linux_distribution():
+          distribution += ' ' + item
+      return distribution
+
+
+    def get_packages(self):
+      """Attempt to get a number of installed packages. No patches available for this one, yet."""
+      try:
+        return subprocess.run("dpkg -l | grep -c '^ii'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
+      except:
+        return None
+
+
+    def get_motherboard(self):
+      """For standard Linux installations with sys info files"""
+      try:  
+        manufacturer_and_name = subprocess.run("grep '' /sys/class/dmi/id/board_vendor && grep '' /sys/class/dmi/id/board_name", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.split('\n')
+        return manufacturer_and_name[0], manufacturer_and_name[1]
+      except:
+        # Thought you said standard?
+        return self.motherboard_patches()
+
+
+    def motherboard_patches(self):
+      """For those fuckers that *don't* have standard insallations, let's try dmidecode."""
+      try:
+        manufacturer_and_name = subprocess.run("dmidecode | grep -A3 '^System Information'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.split('\n')
+        motherboard_vendor = manufacturer_and_name[1].strip('\tManufacturer: ')
+        motherboard_name = manufacturer_and_name[2].strip('\tProduct Name: ')
+        if motherboard_vendor == 'System manufacturer' and motherboard_name == 'System Product Name':
+          # Someone has some weird shit going on, I give up.
+          return None, None
+        else:
+          # Ok, so that worked. Thanks dmidecode <3
+          return motherboard_vendor, motherboard_name
+      except:
+        # We've exhausted our patches, maybe I'll find one in the future
+        return None, None
 
 
     def display(self):
+      """Display the specs gathered using the strings constructed in __init__"""
       if self.screen:
         return self.logo.format(*self.colors, self.username, self.os, self.kernel, self.uptime, self.packages, self.shell, self.hdd, self.cpu, self.ram, self.screen, self.motherboard)
       else:
         return self.logo.format(*self.colors, self.username, self.os, self.kernel, self.uptime, self.packages, self.shell, self.hdd, self.cpu, self.ram, self.motherboard, self.screen)
-
-
 
 
 class Windows:
