@@ -171,7 +171,6 @@ class Linux:
 
     def get_packages(self):
       """Attempt to get a number of installed packages."""
-      if distro == False:
         try:
           return subprocess.run("dpkg -l | grep -c '^ii'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
         except:
