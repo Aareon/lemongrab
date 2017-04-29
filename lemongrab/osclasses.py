@@ -277,6 +277,7 @@ def get_logo(system, release):
     if os_name in versioned:
         print('versioned')
         file = os.path.join(script_dir, "logos/{}${}".format(os_name, release))
+        print(file)
     else:
         file =  os.path.join(script_dir, "logos/{}".format(os_name))
    
