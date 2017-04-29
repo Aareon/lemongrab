@@ -222,9 +222,11 @@ class Linux:
     def display(self):
       """Display the specs gathered using the strings constructed in __init__"""
       if self.screen:
-        return self.logo.format(*self.dist_colors, self.username, self.os, self.kernel, self.uptime, self.packages, self.shell, self.hdd, self.cpu, self.ram, self.screen, self.motherboard)
+        return self.logo.format(*self.dist_colors, self.username, self.os, self.kernel, self.uptime, self.packages,
+                                self.shell, self.hdd, self.cpu, self.ram, self.screen, self.motherboard, reset)
       else:
-        return self.logo.format(*self.dist_colors, self.username, self.os, self.kernel, self.uptime, self.packages, self.shell, self.hdd, self.cpu, self.ram, self.motherboard, self.screen)
+        return self.logo.format(*self.dist_colors, self.username, self.os, self.kernel, self.uptime, self.packages,
+                                self.shell, self.hdd, self.cpu, self.ram, self.motherboard, self.screen, reset)
 
 
 class Windows:
