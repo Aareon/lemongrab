@@ -257,9 +257,9 @@ class Windows:
 
     def display(self):
       if self.screen:
-        return self.logo.format(*self.dist_colors, self.username, self.os, self.kernel, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.screen, self.motherboard) + '\033[0m'
+        return self.logo.format(*self.dist_colors, self.username, self.os, self.kernel, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.screen, self.motherboard, reset)
       else:
-        return self.logo.format(*self.dist_colors, self.username, self.os, self.kernel, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.motherboard, self.screen) + '\033[0m'
+        return self.logo.format(*self.dist_colors, self.username, self.os, self.kernel, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.motherboard, self.screen, reset)
 
 
 
