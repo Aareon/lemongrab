@@ -265,16 +265,16 @@ class Windows:
 
 def get_logo(system, release):
     versioned = ["windows"]
-    os_name = system.lower()
+    os_name = system.lower().lstrip(' ')
     if ' ' in os_name:
         os_name = os_name.split(' ')[0]
     script_path = os.path.abspath(__file__)
     script_dir = os.path.split(script_path)[0]
     
     if os_name in versioned:
-        file = os.path.join(script_dir, "logos\\{}${}".format(os_name, release))
+        file = os.path.join(script_dir, "logos/{}${}".format(os_name, release))
     else:
-        file =  os.path.join(script_dir, "logos\\{}".format(os_name))
+        file =  os.path.join(script_dir, "logos/{}".format(os_name))
    
     #try:
     #    with open(file) as f:
