@@ -271,8 +271,9 @@ def get_logo(system, release):
     os_name = system.lower().lstrip(' ')
     if ' ' in os_name:
         os_name = os_name.split(' ')
-        if 'Linux' in os_name:
-            os_name.remove('Linux')
+        if 'linux' in os_name:
+            os_name.remove('linux')
+        os_name = os_name[0]
     script_path = os.path.abspath(__file__)
     script_dir = os.path.split(script_path)[0]
     
