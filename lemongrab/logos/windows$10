@@ -1,4 +1,4 @@
-                                  ..,  {1}{0}
+                                  {0}..,  {1}{0}
                       ....,,:;+ccllll  {2}{0}
         ...,,+:;  cllllllllllllllllll  {3}{0}
   ,cclllllllllll  lllllllllllllllllll  {4}{0}
@@ -17,4 +17,4 @@
   `'ccllllllllll  lllllllllllllllllll
          `'""*::  :ccllllllllllllllll
                        ````''\"*::clll
-                                   ``\033[0m
+                                   ``{11}

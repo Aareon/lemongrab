@@ -23,7 +23,7 @@ reset = '\033[0m'
 
 # Modified variables, this is to be made more dynamic in the future
 text_color_dict = {'ubuntu': light_red, 'mint': lime, 'fedora': light_blue,
-                   'windows810': light_red, 'windows7': green}
+                   'windows$10': light_red, 'windows$8': light_red, 'windows7': green}
                    
 distro_color_dict = {'ubuntu': (light_red, white, yellow), 
                      'mint': (lime, white), 'fedora': (blue, white),
@@ -288,5 +288,4 @@ def get_logo(system, release):
     with open(file) as f:
         if os_name not in versioned:
             return f.read(), os_name
-        print('{}${}'.format(os_name, release))
         return f.read(), '{}${}'.format(os_name, release)
