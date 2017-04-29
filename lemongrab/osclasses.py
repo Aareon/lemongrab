@@ -255,7 +255,7 @@ class Windows:
       motherboard_name = subprocess.run("wmic baseboard get product", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n\t').split('\n')[2].rstrip()
       self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.color, reset, motherboard_vendor, motherboard_name)
 
-      print(logo_name)
+      print("'"+logo_name+"'")
       self.dist_colors = distro_color_dict.get(logo_name, (white,))
 
     def display(self):
