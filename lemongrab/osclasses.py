@@ -270,7 +270,9 @@ def get_logo(system, release):
     versioned = ["windows"]
     os_name = system.lower().lstrip(' ')
     if ' ' in os_name:
-        os_name = os_name.split(' ')[0]
+        os_name = os_name.split(' ')
+        if 'Linux' in os_name:
+            os_name.remove('Linux')
     script_path = os.path.abspath(__file__)
     script_dir = os.path.split(script_path)[0]
     
