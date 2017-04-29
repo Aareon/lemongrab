@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import osclasses
+from . import osclasses
 
 def main():
     computer = osclasses.OS()
