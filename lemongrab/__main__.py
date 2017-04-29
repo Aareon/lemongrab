@@ -192,7 +192,7 @@ class Linux:
     def redhat_packages(self):
       try:
         packages = subprocess.run("rpm -qa | wc -l", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
-        if packages != '0'
+        if packages != '0':
           return packages
         else:
           return None
