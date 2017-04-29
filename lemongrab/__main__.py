@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import osclasses
+from . import osclasses
 
 if __name__ == '__main__':
     computer = osclasses.OS()
