@@ -65,36 +65,36 @@ class OS:
 
     def get_shell(self):
       """Get the version of bash currently installed. Needs patches"""
-        try:
-            self.shell = subprocess.run("bash --version", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n').split('(')[0]
-        except:
-            self.shell = None
+      try:
+        return subprocess.run("bash --version", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n').split('(')[0]
+      except:
+        return None
 
 
     def fetch_specs(self):
       """Create a pretty little tuple with all our specs"""
-        Specs = namedtuple('Specs', 'uname username uptime brand hz shell mem_used mem_total disk_free disk_total screen')
-        specs = Specs(uname=self.uname, username=self.username, uptime=self.uptime, brand=self.brand, hz=self.hz, shell=self.shell, mem_used=self.mem_used,
-                      mem_total=self.mem_total, disk_free=self.disk_free, disk_total=self.disk_total, screen=self.screen)
-        return specs
+      Specs = namedtuple('Specs', 'uname username uptime brand hz shell mem_used mem_total disk_free disk_total screen')
+      specs = Specs(uname=self.uname, username=self.username, uptime=self.uptime, brand=self.brand, hz=self.hz, shell=self.shell, mem_used=self.mem_used,
+                    mem_total=self.mem_total, disk_free=self.disk_free, disk_total=self.disk_total, screen=self.screen)
+      return specs
 
 
     def get_screen(self):
       """Try to get that damn screen. If you can't, it's probably headless"""
-        try:
-            from screeninfo import get_monitors
-            screen = get_monitors()
-            return str(screen[0]).strip('monitor()').split('+')[0]
-        except:
-            return None
+      try:
+          from screeninfo import get_monitors
+          screen = get_monitors()
+          return str(screen[0]).strip('monitor()').split('+')[0]
+      except:
+          return None
 
     def check_cpu_info(self):
       """Try to get the cpu information, if you can't tell it to use psutil"""
-        try:
-            self.cpuinfo = __import__('cpuinfo')
-            return True
-        except:
-            return False
+      try:
+          self.cpuinfo = __import__('cpuinfo')
+          return True
+      except:
+          return False
 
 
 class Linux:
