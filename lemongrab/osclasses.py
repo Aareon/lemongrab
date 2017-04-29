@@ -27,7 +27,8 @@ text_color_dict = {'ubuntu': light_red, 'mint': lime, 'fedora': light_blue,
                    
 distro_color_dict = {'ubuntu': (light_red, white, yellow), 
                      'mint': (lime, white), 'fedora': (blue, white),
-                     'windows810': (blue,), 'windows7': (red, green, blue, yellow)}
+                     'windows$10': (blue,), 'windows$8': (blue,),
+                     'windows$7': (red, green, blue, yellow)}
 
 
 
@@ -255,7 +256,6 @@ class Windows:
       motherboard_name = subprocess.run("wmic baseboard get product", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n\t').split('\n')[2].rstrip()
       self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.color, reset, motherboard_vendor, motherboard_name)
 
-      print("'"+logo_name+"'")
       self.dist_colors = distro_color_dict.get(logo_name, (white,))
 
     def display(self):
