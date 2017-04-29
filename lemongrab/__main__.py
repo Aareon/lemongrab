@@ -14,7 +14,3 @@ if __name__ == '__main__':
     else:
         logo = osclasses.NoLogo(specs)
     print(logo.display())
-    
-if __name__ == '__main__':
-    main()
-    
