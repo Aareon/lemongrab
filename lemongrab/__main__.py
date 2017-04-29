@@ -64,6 +64,7 @@ class OS:
 
 
     def get_shell(self):
+      """Get the version of bash currently installed. Needs patches"""
         try:
             self.shell = subprocess.run("bash --version", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n').split('(')[0]
         except:
@@ -71,6 +72,7 @@ class OS:
 
 
     def fetch_specs(self):
+      """Create a pretty little tuple with all our specs"""
         Specs = namedtuple('Specs', 'uname username uptime brand hz shell mem_used mem_total disk_free disk_total screen')
         specs = Specs(uname=self.uname, username=self.username, uptime=self.uptime, brand=self.brand, hz=self.hz, shell=self.shell, mem_used=self.mem_used,
                       mem_total=self.mem_total, disk_free=self.disk_free, disk_total=self.disk_total, screen=self.screen)
@@ -78,6 +80,7 @@ class OS:
 
 
     def get_screen(self):
+      """Try to get that damn screen. If you can't, it's probably headless"""
         try:
             from screeninfo import get_monitors
             screen = get_monitors()
@@ -86,6 +89,7 @@ class OS:
             return None
 
     def check_cpu_info(self):
+      """Try to get the cpu information, if you can't tell it to use psutil"""
         try:
             self.cpuinfo = __import__('cpuinfo')
             return True
@@ -100,7 +104,9 @@ class Linux:
       self.green = '\033[0;32;49m'
       self.lime = '\033[1;32;49m'
       self.white = '\033[1;37;49m'
-      self.light_red = '\033[0;1;39m'
+      self.blue = '\033[0;34;49m'
+      self.light_blue = '\033[1;34;49m'
+      self.light_red = '\033[1;31;49m'
       self.yellow = '\033[1;33;49m'
       self.reset = '\033[0m'
 
@@ -142,12 +148,15 @@ class Linux:
 
 
     def text_colors(self, logo_name):
+      """Text looking a little bland? Throw some dicts in it!"""
       color_dict = {'ubuntu': self.light_red, 'mint': self.lime}
       return color_dict.get(logo_name, self.light_red)
 
 
     def distro_colors(self, logo_name):
-      color_dict = {'ubuntu': (self.light_red, self.white, self.yellow), 'mint': (self.lime, self.white)}
+      """Give that poor boy some color"""
+      color_dict = {'ubuntu': (self.light_red, self.white, self.yellow), 
+      'mint': (self.lime, self.white)}
       return color_dict.get(logo_name, (self.white,))
 
 
@@ -161,11 +170,12 @@ class Linux:
 
 
     def get_packages(self):
-      """Attempt to get a number of installed packages. No patches available for this one, yet."""
-      try:
-        return subprocess.run("dpkg -l | grep -c '^ii'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
-      except:
-        return None
+      """Attempt to get a number of installed packages."""
+      if distro == False:
+        try:
+          return subprocess.run("dpkg -l | grep -c '^ii'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
+        except:
+          return self.packages_patches()
 
 
     def get_motherboard(self):
@@ -177,6 +187,11 @@ class Linux:
         # Thought you said standard?
         return self.motherboard_patches()
 
+    def packages_patches(self):
+      try:
+        return subprocess.run("rpm -qa | wc -l", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
+      except:
+        return None
 
     def motherboard_patches(self):
       """For those fuckers that *don't* have standard insallations, let's try dmidecode."""
@@ -280,7 +295,6 @@ def Logos(system, release):
          `'""*::  :ccllllllllllllllll
                        ````''\"*::clll
                                    ``\033[0m
-
   """
   windows7 = """{0}
 
@@ -344,6 +358,26 @@ def Logos(system, release):
              \.MMMMMMMMMMMMMMMMMMM\033[0m
   """
 
+  fedora = """{0}
+             /:-------------:\          {2}{0}
+        :-------------------::        {3}{0}
+      :-----------{1}/shhOHbmp{0}---:\      {4}{0}
+    /-----------{1}omMMMNNNMMD{0}  ---:     {5}{0}
+   :-----------{1}sMMMMNMNMP{0}.    ---:    {6}{0}
+  :-----------{1}:MMMdP{0}-------    ---\   {7}{0}
+ ,------------{1}:MMMd{0}--------    ---:   {8}{0}
+ :------------{1}:MMMd{0}-------    .---:   {9}{0}
+ :----    {1}oNMMMMMMMMMNho{0}     .----:   {10}
+ :--     .{1}+shhhMMMmhhy++   {0}.------/
+ :-    -------{1}:MMMd{0}--------------:
+ :-   --------{1}/MMMd{0}-------------;
+ :-    ------{1}/hMMMy{0}------------:
+ :-- {1}:dMNdhhdNMMNo{0}------------;
+ :---{1}:sdNMMMMNds:{0}------------:
+ :------{1}:://:{0}-------------::
+ :---------------------://\033[0m
+  """
+
   if 'windows' in system.lower():
     if '10' or '8' in release:
       return windows810, 'windows810'
@@ -353,6 +387,8 @@ def Logos(system, release):
     return ubuntu, 'ubuntu'
   elif 'mint' in system.lower():
     return mint, 'mint'
+  elif 'fedora' in system.lower():
+    return fedora, 'fedora'
 
 
 if __name__ == '__main__':
