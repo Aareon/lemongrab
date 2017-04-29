@@ -208,7 +208,7 @@ class Windows:
       self.white = '\033[1;37;49m'
       self.blue = '\033[0;34;49m'
       self.red = '\033[0;31;49m'
-      self.light_red = '\033[0;1;49m'
+      self.light_red = '\033[1;31;49m'
       self.green = '\033[0;32;49m'
       self.yellow = '\033[1;33;49m'
       self.reset = '\033[0m'
@@ -218,34 +218,42 @@ class Windows:
       self.node = specs.uname.node
       self.logo, logo_name = Logos(self.system, self.release)
 
-      self.username = '{0}{1}{2}@{0}{3}'.format(self.light_red, specs.username, self.white, self.node)
-      self.kernel = '{0}Kernel: {1}{2} {3}'.format(self.light_red, self.reset, specs.uname.machine, specs.uname.release)
-      self.os = '{0}OS: {1}{2} {3}'.format(self.light_red, self.reset, specs.uname.system, specs.uname.release)
-      self.uptime = '{0}Uptime: {1}{2}'.format(self.light_red, self.reset, specs.uptime)
-      self.shell = '{0}Shell: {1}{2}'.format(self.light_red, self.reset, specs.shell)
-      self.hdd = '{0}HDD: {1}{2} / {3} (Free/Total)'.format(self.light_red, self.reset, specs.disk_free, specs.disk_total)
-      self.cpu = '{0}CPU: {1}{2} @ {3}'.format(self.light_red, self.reset, specs.brand, specs.hz)
-      self.ram = '{0}RAM: {1}{2} / {3} (Used/Total)'.format(self.light_red, self.reset, specs.mem_used, specs.mem_total)
+      self.color = self.text_colors(logo_name)
+
+      self.username = '{0}{1}{2}@{0}{3}'.format(self.color, specs.username, self.white, self.node)
+      self.kernel = '{0}Kernel: {1}{2} {3}'.format(self.color, self.reset, specs.uname.machine, specs.uname.release)
+      self.os = '{0}OS: {1}{2} {3}'.format(self.color, self.reset, specs.uname.system, specs.uname.release)
+      self.uptime = '{0}Uptime: {1}{2}'.format(self.color, self.reset, specs.uptime)
+      self.shell = '{0}Shell: {1}{2}'.format(self.color, self.reset, specs.shell)
+      self.hdd = '{0}HDD: {1}{2} / {3} (Free/Total)'.format(self.color, self.reset, specs.disk_free, specs.disk_total)
+      self.cpu = '{0}CPU: {1}{2} @ {3}'.format(self.color, self.reset, specs.brand, specs.hz)
+      self.ram = '{0}RAM: {1}{2} / {3} (Used/Total)'.format(self.color, self.reset, specs.mem_used, specs.mem_total)
 
       self.screen = ''
       if specs.screen:
-        self.screen = '{0}Resolution: {1}{2}'.format(self.light_red, self.reset, specs.screen)
+        self.screen = '{0}Resolution: {1}{2}'.format(self.color, self.reset, specs.screen)
 
       motherboard_vendor = subprocess.run("wmic baseboard get manufacturer", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.split('\n')[2].rstrip()
       motherboard_name = subprocess.run("wmic baseboard get product", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n\t').split('\n')[2].rstrip()
-      self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.light_red, self.reset, motherboard_vendor, motherboard_name)
+      self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.color, self.reset, motherboard_vendor, motherboard_name)
 
-      if logo_name == 'windows810':
-        self.colors = (self.blue,)
-      else:
-        self.colors = (self.red, self.green, self.blue, self.yellow)
+      self.dist_colors = self.distro_colors(logo_name)
+
+
+    def text_colors(self, logo_name):
+      color_dict = {'windows810': self.light_red, 'windows7': self.green}
+      return color_dict.get(logo_name, self.light_red)
+
+    def distro_colors(self, logo_name):
+      color_dict = {'windows810': (self.blue,), 'windows7': (self.red, self.green, self.blue, self.yellow)}
+      return color_dict.get(logo_name, (self.white,))
 
 
     def display(self):
       if self.screen:
-        return self.logo.format(*self.colors, self.username, self.os, self.kernel, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.screen, self.motherboard)
+        return self.logo.format(*self.dist_colors, self.username, self.os, self.kernel, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.screen, self.motherboard)
       else:
-        return self.logo.format(*self.colors, self.username, self.os, self.kernel, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.motherboard, self.screen)
+        return self.logo.format(*self.dist_colors, self.username, self.os, self.kernel, self.uptime, self.shell, self.hdd, self.cpu, self.ram, self.motherboard, self.screen)
 
 
 
