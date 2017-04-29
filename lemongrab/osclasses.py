@@ -282,9 +282,11 @@ def get_logo(system, release):
     else:
         file =  os.path.join(script_dir, "logos/{}".format(os_name))
    
-    try:
+    #try:
+    #    with open(file) as f:
+    #        return f.read(), os_name
+    #
+    #except FileNotFoundError:
+    #    return None
         with open(file) as f:
             return f.read(), os_name
-            
-    except FileNotFoundError:
-        return None
