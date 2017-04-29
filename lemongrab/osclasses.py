@@ -234,7 +234,7 @@ class Windows:
       self.node = specs.uname.node
       self.logo, logo_name = get_logo(self.system, self.release)
 
-      self.color =text_color_dict.get(logo_name, light_red)
+      self.color = text_color_dict.get(logo_name, light_red)
 
       self.username = '{0}{1}{2}@{0}{3}'.format(self.color, specs.username, white, self.node)
       self.kernel = '{0}Kernel: {1}{2} {3}'.format(self.color, reset, specs.uname.machine, specs.uname.release)
@@ -266,6 +266,8 @@ class Windows:
 def get_logo(system, release):
     versioned = ["windows"]
     os_name = system.lower()
+    if ' ' in os_name:
+        os_name = os_name.split(' ')[0]
     script_path = os.path.abspath(__file__)
     script_dir = os.path.split(script_path)[0]
     
