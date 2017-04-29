@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import platform
 import getpass
 import subprocess
@@ -194,8 +196,7 @@ def Logos(system, release):
   else:
     return windows7, 'windows7'
 
-
-if __name__ == '__main__':
+def main():
     computer = OS()
     specs = computer.fetch_specs()
     if 'Windows' in specs.uname:
@@ -205,3 +206,7 @@ if __name__ == '__main__':
     else:
         no_logo = No_Logo(specs)
     print(logo.display())
+    
+if __name__ == '__main__':
+    main()
+    

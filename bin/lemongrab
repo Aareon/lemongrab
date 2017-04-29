@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+
+import runpy
+# Hacky, yes, but running packages in scripts is a grey area, 
+# I couldn't get `import lemongrab; lemongrab.main()` to work, 
+# even trying `lemongrab.__main__()`
+
+#runpy.run_module('lemongrab',run_name="__main__")
