@@ -169,12 +169,15 @@ class Linux:
       return distribution
 
 
-    def get_packages(self):
+    def get_packages(self, distro):
       """Attempt to get a number of installed packages."""
-      try:
-        return subprocess.run("dpkg -l | grep -c '^ii'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
-      except:
-        return self.packages_patches()
+      if distro in ['ubuntu', 'mint']:
+        try:
+          return subprocess.run("dpkg -l | grep -c '^ii'", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
+        except:
+          return None
+      elif distro in ['fedora', 'centos']:
+          return self.redhat_packages()
 
 
     def get_motherboard(self):
@@ -186,9 +189,13 @@ class Linux:
         # Thought you said standard?
         return self.motherboard_patches()
 
-    def packages_patches(self):
+    def redhat_packages(self):
       try:
-        return subprocess.run("rpm -qa | wc -l", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
+        packages = subprocess.run("rpm -qa | wc -l", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n')
+        if packages != '0'
+          return packages
+        else:
+          return None
       except:
         return None
 
