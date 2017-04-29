@@ -25,9 +25,9 @@ pip install git+git://github.com/Aareon/lemongrab@development
 ```
 
 # Usage
-`python -m lemongrab`
+`lemongrab`
 
-replace `python` with `python3` if you are on linux
+simple! 
 
 License
 ----
