@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-from . import osclasses
+import osclasses
 
-if __name__ == '__main__':
+def main():
     computer = osclasses.OS()
-
     specs = computer.fetch_specs()
     
     if 'Windows' in specs.uname:
@@ -14,3 +13,7 @@ if __name__ == '__main__':
     else:
         logo = osclasses.NoLogo(specs)
     print(logo.display())
+    
+
+if __name__ == '__main__':
+    main()
