@@ -117,7 +117,7 @@ class Linux:
       self.node = specs.uname.node
       self.logo, logo_name = Logos(self.distribution, self.release)
 
-      packages = self.get_packages()
+      packages = self.get_packages(logo_name)
 
       self.motherboard_vendor, self.motherboard_name = self.get_motherboard()
 
