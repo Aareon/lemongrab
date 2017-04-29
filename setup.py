@@ -1,5 +1,10 @@
 from distutils.core import setup
+import sys
 
+if sys.version_info[:2] < (3, 0):
+    sys.exit('lemongrab requires python 3 or higher.')
+
+    
 setup(
     name='lemongrab',
     version='0.1dev',
@@ -14,4 +19,10 @@ setup(
     'screeninfo==0.3',
     'uptime==3.0.1'
     ],
+    entry_points={
+            'console_scripts': [
+                'lemongrab = lemongrab.__main__:main'
+            ]
+        },
+    
 )
