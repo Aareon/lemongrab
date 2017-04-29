@@ -135,31 +135,31 @@ class Linux:
       packages = self.get_packages(logo_name)
 
       self.motherboard_vendor, self.motherboard_name = self.get_motherboard()
-      self.color =  text_color_dict.get(logo_name, self.light_red)
+      self.color =  text_color_dict.get(logo_name, light_red)
       
-      self.username = '{0}{1}{2}@{0}{3}{4}'.format(self.color, specs.username, self.white, self.node, self.reset)
-      self.kernel = '{0}Kernel: {1}{2} Linux {3}'.format(self.color, self.reset, specs.uname.machine, specs.uname.release)
-      self.os = '{0}OS: {1}{2}'.format(self.color, self.reset, self.distribution)
-      self.uptime = '{0}Uptime: {1}{2}'.format(self.color, self.reset, specs.uptime)
+      self.username = '{0}{1}{2}@{0}{3}{4}'.format(self.color, specs.username, white, self.node, reset)
+      self.kernel = '{0}Kernel: {1}{2} Linux {3}'.format(self.color, reset, specs.uname.machine, specs.uname.release)
+      self.os = '{0}OS: {1}{2}'.format(self.color, reset, self.distribution)
+      self.uptime = '{0}Uptime: {1}{2}'.format(self.color, reset, specs.uptime)
 
       self.packages = ''
       if packages:
-        self.packages = '{0}Packages: {1}{2}'.format(self.color, self.reset, packages)
+        self.packages = '{0}Packages: {1}{2}'.format(self.color, reset, packages)
 
-      self.shell = '{0}Shell: {1}{2}'.format(self.color, self.reset, specs.shell)
-      self.hdd = '{0}HDD: {1}{2} / {3} (Free/Total)'.format(self.color, self.reset, specs.disk_free, specs.disk_total)
-      self.cpu = '{0}CPU: {1}{2} @ {3}'.format(self.color, self.reset, specs.brand, specs.hz)
-      self.ram = '{0}RAM: {1}{2} / {3} (Used/Total)'.format(self.color, self.reset, specs.mem_used, specs.mem_total)
+      self.shell = '{0}Shell: {1}{2}'.format(self.color, reset, specs.shell)
+      self.hdd = '{0}HDD: {1}{2} / {3} (Free/Total)'.format(self.color, reset, specs.disk_free, specs.disk_total)
+      self.cpu = '{0}CPU: {1}{2} @ {3}'.format(self.color, reset, specs.brand, specs.hz)
+      self.ram = '{0}RAM: {1}{2} / {3} (Used/Total)'.format(self.color, reset, specs.mem_used, specs.mem_total)
 
       self.screen = ''
       if specs.screen:
-        self.screen = '{0}Resolution: {1}{2}'.format(self.color, self.reset, specs.screen)
+        self.screen = '{0}Resolution: {1}{2}'.format(self.color, reset, specs.screen)
 
       self.motherboard = ''
       if self.motherboard_vendor and self.motherboard_vendor:
-        self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.color, self.reset, self.motherboard_vendor, self.motherboard_name)
+        self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.color, reset, self.motherboard_vendor, self.motherboard_name)
       
-      self.dist_colors = distro_color_dict.get(logo_name, (self.white,))
+      self.dist_colors = distro_color_dict.get(logo_name, (white,))
 
 
 
@@ -229,39 +229,31 @@ class Linux:
 
 class Windows:
     def __init__(self, specs):
-      self.white = '\033[1;37;49m'
-      self.blue = '\033[0;34;49m'
-      self.red = '\033[0;31;49m'
-      self.light_red = '\033[1;31;49m'
-      self.green = '\033[0;32;49m'
-      self.yellow = '\033[1;33;49m'
-      self.reset = '\033[0m'
-
       self.system = specs.uname.system
       self.release = specs.uname.release
       self.node = specs.uname.node
       self.logo, logo_name = get_logo(self.system, self.release)
 
-      self.color =text_color_dict.get(logo_name, self.light_red)
+      self.color =text_color_dict.get(logo_name, light_red)
 
-      self.username = '{0}{1}{2}@{0}{3}'.format(self.color, specs.username, self.white, self.node)
-      self.kernel = '{0}Kernel: {1}{2} {3}'.format(self.color, self.reset, specs.uname.machine, specs.uname.release)
-      self.os = '{0}OS: {1}{2} {3}'.format(self.color, self.reset, specs.uname.system, specs.uname.release)
-      self.uptime = '{0}Uptime: {1}{2}'.format(self.color, self.reset, specs.uptime)
-      self.shell = '{0}Shell: {1}{2}'.format(self.color, self.reset, specs.shell)
-      self.hdd = '{0}HDD: {1}{2} / {3} (Free/Total)'.format(self.color, self.reset, specs.disk_free, specs.disk_total)
-      self.cpu = '{0}CPU: {1}{2} @ {3}'.format(self.color, self.reset, specs.brand, specs.hz)
-      self.ram = '{0}RAM: {1}{2} / {3} (Used/Total)'.format(self.color, self.reset, specs.mem_used, specs.mem_total)
+      self.username = '{0}{1}{2}@{0}{3}'.format(self.color, specs.username, white, self.node)
+      self.kernel = '{0}Kernel: {1}{2} {3}'.format(self.color, reset, specs.uname.machine, specs.uname.release)
+      self.os = '{0}OS: {1}{2} {3}'.format(self.color, reset, specs.uname.system, specs.uname.release)
+      self.uptime = '{0}Uptime: {1}{2}'.format(self.color, reset, specs.uptime)
+      self.shell = '{0}Shell: {1}{2}'.format(self.color, reset, specs.shell)
+      self.hdd = '{0}HDD: {1}{2} / {3} (Free/Total)'.format(self.color, reset, specs.disk_free, specs.disk_total)
+      self.cpu = '{0}CPU: {1}{2} @ {3}'.format(self.color, reset, specs.brand, specs.hz)
+      self.ram = '{0}RAM: {1}{2} / {3} (Used/Total)'.format(self.color, reset, specs.mem_used, specs.mem_total)
 
       self.screen = ''
       if specs.screen:
-        self.screen = '{0}Resolution: {1}{2}'.format(self.color, self.reset, specs.screen)
+        self.screen = '{0}Resolution: {1}{2}'.format(self.color, reset, specs.screen)
 
       motherboard_vendor = subprocess.run("wmic baseboard get manufacturer", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.split('\n')[2].rstrip()
       motherboard_name = subprocess.run("wmic baseboard get product", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n\t').split('\n')[2].rstrip()
-      self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.color, self.reset, motherboard_vendor, motherboard_name)
+      self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.color, reset, motherboard_vendor, motherboard_name)
 
-      self.dist_colors = distro_color_dict.get(logo_name, (self.white,))
+      self.dist_colors = distro_color_dict.get(logo_name, (white,))
 
     def display(self):
       if self.screen:
@@ -278,9 +270,9 @@ def get_logo(system, release):
     script_dir = os.path.split(script_path)[0]
     
     if os_name in versioned:
-        file = os.path.join(script_dir, "logos/{}${}".format(os_name, release))
+        file = os.path.join(script_dir, "logos\\{}${}".format(os_name, release))
     else:
-        file =  os.path.join(script_dir, "logos/{}".format(os_name))
+        file =  os.path.join(script_dir, "logos\\{}".format(os_name))
    
     #try:
     #    with open(file) as f:
