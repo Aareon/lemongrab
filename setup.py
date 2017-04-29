@@ -19,7 +19,7 @@ setup(
     'screeninfo==0.3',
     'uptime==3.0.1'
     ],
-    scripts=['bin/lemongrab'],
+    scripts=['/bin/lemongrab'],
     entry_points={
             'console_scripts': [
                 'lemongrab = lemongrab.__main__:main'
