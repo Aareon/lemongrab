@@ -33,7 +33,7 @@ def ddhhmmss(seconds):
     seconds %= 3600
     minute = seconds // 60
     return "%d days %d hours %d minutes" % (day, hour, minute)
-    
+
 
 class OS:
     def __init__(self):
@@ -97,9 +97,11 @@ class Linux:
     def __init__(self, specs):
       """Set arbitrary strings for attaching to the logo,
        maybe even fuck something up!"""
-      self.white = '\033[1;37;40m'
-      self.light_red = '\033[0;1;31m'
-      self.yellow = '\033[1;33;40m'
+      self.green = '\033[0;32;49m'
+      self.lime = '\033[1;32;49m'
+      self.white = '\033[1;37;49m'
+      self.light_red = '\033[0;1;39m'
+      self.yellow = '\033[1;33;49m'
       self.reset = '\033[0m'
 
       self.distribution = self.get_distro()
@@ -113,34 +115,39 @@ class Linux:
 
       self.motherboard_vendor, self.motherboard_name = self.get_motherboard()
 
-      self.username = '{0}{1}{2}@{0}{3}{4}'.format(self.light_red, specs.username, self.white, self.node, self.reset)
-      self.kernel = '{0}Kernel: {1}{2} Linux {3}'.format(self.light_red, self.reset, specs.uname.machine, specs.uname.release)
-      self.os = '{0}OS: {1}{2}'.format(self.light_red, self.reset, self.distribution)
-      self.uptime = '{0}Uptime: {1}{2}'.format(self.light_red, self.reset, specs.uptime)
+      self.color = self.text_colors(logo_name)
+      self.username = '{0}{1}{2}@{0}{3}{4}'.format(self.color, specs.username, self.white, self.node, self.reset)
+      self.kernel = '{0}Kernel: {1}{2} Linux {3}'.format(self.color, self.reset, specs.uname.machine, specs.uname.release)
+      self.os = '{0}OS: {1}{2}'.format(self.color, self.reset, self.distribution)
+      self.uptime = '{0}Uptime: {1}{2}'.format(self.color, self.reset, specs.uptime)
 
       self.packages = ''
       if packages:
-        self.packages = '{0}Packages: {1}{2}'.format(self.light_red, self.reset, packages)
+        self.packages = '{0}Packages: {1}{2}'.format(self.color, self.reset, packages)
 
-      self.shell = '{0}Shell: {1}{2}'.format(self.light_red, self.reset, specs.shell)
-      self.hdd = '{0}HDD: {1}{2} / {3} (Free/Total)'.format(self.light_red, self.reset, specs.disk_free, specs.disk_total)
-      self.cpu = '{0}CPU: {1}{2} @ {3}'.format(self.light_red, self.reset, specs.brand, specs.hz)
-      self.ram = '{0}RAM: {1}{2} / {3} (Used/Total)'.format(self.light_red, self.reset, specs.mem_used, specs.mem_total)
+      self.shell = '{0}Shell: {1}{2}'.format(self.color, self.reset, specs.shell)
+      self.hdd = '{0}HDD: {1}{2} / {3} (Free/Total)'.format(self.color, self.reset, specs.disk_free, specs.disk_total)
+      self.cpu = '{0}CPU: {1}{2} @ {3}'.format(self.color, self.reset, specs.brand, specs.hz)
+      self.ram = '{0}RAM: {1}{2} / {3} (Used/Total)'.format(self.color, self.reset, specs.mem_used, specs.mem_total)
 
       self.screen = ''
       if specs.screen:
-        self.screen = '{0}Resolution: {1}{2}'.format(self.light_red, self.reset, specs.screen)
+        self.screen = '{0}Resolution: {1}{2}'.format(self.color, self.reset, specs.screen)
 
       self.motherboard = ''
       if self.motherboard_vendor and self.motherboard_vendor:
-        self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.light_red, self.reset, self.motherboard_vendor, self.motherboard_name)
+        self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.color, self.reset, self.motherboard_vendor, self.motherboard_name)
+
+      self.dist_colors = self.distro_colors(logo_name)
 
 
-        self.colors = self.distro_colors(logo_name)
+    def text_colors(self, logo_name):
+      color_dict = {'ubuntu': self.light_red, 'mint': self.lime}
+      return color_dict.get(logo_name, self.light_red)
 
 
     def distro_colors(self, logo_name):
-      color_dict = {'ubuntu': (self.light_red, self.white, self.yellow)}
+      color_dict = {'ubuntu': (self.light_red, self.white, self.yellow), 'mint': (self.lime, self.white)}
       return color_dict.get(logo_name, (self.white,))
 
 
@@ -191,19 +198,19 @@ class Linux:
     def display(self):
       """Display the specs gathered using the strings constructed in __init__"""
       if self.screen:
-        return self.logo.format(*self.colors, self.username, self.os, self.kernel, self.uptime, self.packages, self.shell, self.hdd, self.cpu, self.ram, self.screen, self.motherboard)
+        return self.logo.format(*self.dist_colors, self.username, self.os, self.kernel, self.uptime, self.packages, self.shell, self.hdd, self.cpu, self.ram, self.screen, self.motherboard)
       else:
-        return self.logo.format(*self.colors, self.username, self.os, self.kernel, self.uptime, self.packages, self.shell, self.hdd, self.cpu, self.ram, self.motherboard, self.screen)
+        return self.logo.format(*self.dist_colors, self.username, self.os, self.kernel, self.uptime, self.packages, self.shell, self.hdd, self.cpu, self.ram, self.motherboard, self.screen)
 
 
 class Windows:
     def __init__(self, specs):
-      self.white = '\033[1;37;40m'
-      self.blue = '\033[0;34;40m'
-      self.red = '\033[0;31;40m'
-      self.light_red = '\033[0;1;31m'
-      self.green = '\033[0;32;40m'
-      self.yellow = '\033[1;33;40m'
+      self.white = '\033[1;37;49m'
+      self.blue = '\033[0;34;49m'
+      self.red = '\033[0;31;49m'
+      self.light_red = '\033[0;1;49m'
+      self.green = '\033[0;32;49m'
+      self.yellow = '\033[1;33;49m'
       self.reset = '\033[0m'
 
       self.system = specs.uname.system
@@ -309,6 +316,26 @@ def Logos(system, release):
 
   """
 
+  mint = """
+                                       {2}{0}
+ MMMMMMMMMMMMMMMMMMMMMMMMMmds+.        {3}{0}
+ MMm----::-://////////////oymNMd+`     {4}{0}
+ MMd      {1}/++                {0}-sNMd:    {5}{0}
+ MMNso/`  {1}dMM    `.::-. .-::.` {0}.hMN:   {6}{0}
+ ddddMMh  {1}dMM   :hNMNMNhNMNMNh: {0}`NMm   {7}{0}
+     NMm  {1}dMM  .NMN/-+MMM+-/NMN` {0}dMM   {8}{0}
+     NMm  {1}dMM  -MMm  `MMM   dMM. {0}dMM   {9}{0}
+     NMm  {1}dMM  -MMm  `MMM   dMM. {0}dMM   {10}{0}
+     NMm  {1}dMM  .mmd  `mmm   yMM. {0}dMM
+     NMm  {1}dMM`  ..`   ...   ydm. {0}dMM
+     hMM- {1}+MMd/-------...-:sdds  {0}dMM
+     -NMm- {1}:hNMNNNmdddddddddy/`  {0}dMM
+      -dMNs-{1}``-::::-------.``    {0}dMM
+       `/dMNmy+/:-------------:/yMMM{0}
+          ./ydNMMMMMMMMMMMMMMMMMMMMM{0}
+             \.MMMMMMMMMMMMMMMMMMM\033[0m
+  """
+
   if 'windows' in system.lower():
     if '10' or '8' in release:
       return windows810, 'windows810'
@@ -316,6 +343,8 @@ def Logos(system, release):
       return windows7, 'windows7'
   elif 'ubuntu' in system.lower():
     return ubuntu, 'ubuntu'
+  elif 'mint' in system.lower():
+    return mint, 'mint'
 
 
 if __name__ == '__main__':
