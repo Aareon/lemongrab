@@ -149,14 +149,14 @@ class Linux:
 
     def text_colors(self, logo_name):
       """Text looking a little bland? Throw some dicts in it!"""
-      color_dict = {'ubuntu': self.light_red, 'mint': self.lime}
+      color_dict = {'ubuntu': self.light_red, 'mint': self.lime, 'fedora': self.light_blue}
       return color_dict.get(logo_name, self.light_red)
 
 
     def distro_colors(self, logo_name):
       """Give that poor boy some color"""
       color_dict = {'ubuntu': (self.light_red, self.white, self.yellow), 
-      'mint': (self.lime, self.white)}
+      'mint': (self.lime, self.white), 'fedora': (self.blue, self.white)}
       return color_dict.get(logo_name, (self.white,))
 
 
