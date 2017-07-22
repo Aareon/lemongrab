@@ -144,7 +144,7 @@ class Linux:
       
       self.username = '{0}{1}{2}@{0}{3}{4}'.format(self.color, specs.username, white, self.node, reset)
       self.kernel = '{0}Kernel: {1}{2} Linux {3}'.format(self.color, reset, specs.uname.machine, specs.uname.release)
-      self.os = '{0}OS: {1}{2}'.format(self.color, reset, self.distribution)
+      self.os = '{0}OS: {1}{2}'.format(self.color, reset, self.distribution.lstrip())
       self.uptime = '{0}Uptime: {1}{2}'.format(self.color, reset, specs.uptime)
 
       self.packages = ''
@@ -162,7 +162,7 @@ class Linux:
 
       self.motherboard = ''
       if self.motherboard_vendor and self.motherboard_vendor:
-        self.motherboard = '{0}Motherboard: {1} {2} {3}'.format(self.color, reset, self.motherboard_vendor, self.motherboard_name)
+        self.motherboard = '{0}Motherboard: {1} {2} {3}'.format(self.color, reset, self.motherboard_vendor.lstrip(), self.motherboard_name)
       
       self.dist_colors = distro_color_dict.get(logo_name, (white,))
 
