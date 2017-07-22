@@ -194,8 +194,8 @@ class Linux:
         manufacturer_and_name = subprocess.run("grep '' /sys/class/dmi/id/board_vendor && grep '' /sys/class/dmi/id/board_name", 
                                                shell=True, 
                                                stdout=subprocess.PIPE, 
-                                               universal_newlines=True).stdout.strip(' ').split('\n')
-        return manufacturer_and_name[0], manufacturer_and_name[1]
+                                               universal_newlines=True).stdout.split('\n')
+        return manufacturer_and_name[0].strip(' '), manufacturer_and_name[1].strip(' ')
       except:
         # Thought you said standard?
         return self.motherboard_patches()
