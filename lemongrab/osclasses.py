@@ -69,7 +69,7 @@ class OS:
             x = ''
             cpu = self.cpuinfo.get_cpu_info()
             self.brand = [v for v in cpu['brand'].rstrip().split(' ') if v != x]
-            for item in brand:
+            for item in self.brand:
               x = x + item + ' '
             self.brand = x[:-1]
             self.hz = cpu['hz_actual']
