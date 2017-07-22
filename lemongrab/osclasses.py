@@ -66,8 +66,12 @@ class OS:
         self.uptime = ddhhmmss(int(uptime.uptime()))
 
         if self.check_cpu_info():
+            x = ''
             cpu = self.cpuinfo.get_cpu_info()
-            self.brand = cpu['brand'].rstrip()
+            self.brand = [v for v in cpu['brand'].rstrip().split(' ') if v != x]
+            for item in brand:
+              x = x + item + ' '
+            self.brand = x[:-1]
             self.hz = cpu['hz_actual']
         else:
             self.brand = platform.processor()
@@ -158,7 +162,7 @@ class Linux:
 
       self.motherboard = ''
       if self.motherboard_vendor and self.motherboard_vendor:
-        self.motherboard = '{0}Motherboard: {1}{2} {3}'.format(self.color, reset, self.motherboard_vendor, self.motherboard_name)
+        self.motherboard = '{0}Motherboard: {1} {2} {3}'.format(self.color, reset, self.motherboard_vendor, self.motherboard_name)
       
       self.dist_colors = distro_color_dict.get(logo_name, (white,))
 
@@ -187,7 +191,10 @@ class Linux:
     def get_motherboard(self):
       """For standard Linux installations with sys info files"""
       try:  
-        manufacturer_and_name = subprocess.run("grep '' /sys/class/dmi/id/board_vendor && grep '' /sys/class/dmi/id/board_name", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.split('\n')
+        manufacturer_and_name = subprocess.run("grep '' /sys/class/dmi/id/board_vendor && grep '' /sys/class/dmi/id/board_name", 
+                                               shell=True, 
+                                               stdout=subprocess.PIPE, 
+                                               universal_newlines=True).stdout.strip(' ').split('\n')
         return manufacturer_and_name[0], manufacturer_and_name[1]
       except:
         # Thought you said standard?
