@@ -94,7 +94,7 @@ class OS:
     def get_shell(self):
       """Get the version of bash currently installed. Needs patches"""
       try:
-        return subprocess.run("echo $0", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n').split('(')[0]
+        return subprocess.run("$SHELL --version", shell=True, stdout=subprocess.PIPE, universal_newlines=True).stdout.strip('\n').split('(')[0]
       except:
         return None
 
