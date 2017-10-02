@@ -1,4 +1,4 @@
-from utils import distro, mem, motherboard, kernel, node, packages, screen, shell, uptime
+from .utils import distro, mem, motherboard, kernel, node, packages, screen, shell, uptime
 import os
 
 def get_colors(distro):
