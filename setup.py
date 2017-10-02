@@ -19,7 +19,7 @@ setup(
     'screeninfo==0.3',
     'uptime==3.0.1'
     ],
-    package_data={'lemongrab': ['logos/*']},
+    package_data={'lemongrab': ['logos/*', 'utils/*']},
     entry_points={
             'console_scripts': [
                 'lemongrab = lemongrab.__main__:main'
