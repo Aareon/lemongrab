@@ -1,6 +1,4 @@
-#!/usr/bin/env python3.5
-
-from lemongrab.utils import distro, mem, motherboard, kernel, node, packages, screen, shell, uptime
+from utils import distro, mem, motherboard, kernel, node, packages, screen, shell, uptime
 import os
 
 def get_colors(distro):
@@ -19,7 +17,7 @@ def get_colors(distro):
     reset = "\033[0m"
 
     specs_colors = {"arch": cyan,
-                    "debian": red,
+                    "debian": light_red,
                     "elementary": dark_grey,
                     "fedora": light_blue,
                     "mint": lime,
@@ -29,7 +27,7 @@ def get_colors(distro):
                     "windows7": green}
 
     dist_colors = {"arch":(bold+cyan, cyan, reset),
-                   "debian": (bold+white, red),
+                   "debian": (bold+white, light_red),
                    "elementary": (bold+white,),
                    "fedora": (bold+light_blue, white),
                    "linux": (dark_grey, white, yellow),
@@ -40,7 +38,7 @@ def get_colors(distro):
                    "windows$7": (red, green, blue, yellow)}
     return specs_colors.get(distro, red), dist_colors.get(distro, (white,)), reset
 
-def main(logofp=distro.distro_txt().lower(), color=True):
+def main(logofp=distro.distro_txt(), color=True):
     script_path = os.path.abspath(__file__)
     script_dir = os.path.split(script_path)[0]
 
@@ -78,4 +76,4 @@ def main(logofp=distro.distro_txt().lower(), color=True):
 
 
 if __name__ == "__main__":
-    main()
+    main(logofp="debian")
