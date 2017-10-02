@@ -65,7 +65,7 @@ def main(logofp=distro.distro_txt(), color=True):
         specs.append("{}Resolution:{} {}".format(specs_color, reset, resolution))
     specs.append("{}Motherboard:{} {} {}".format(specs_color, reset, *motherboard.motherboard()))
 
-    with open("{}/logos/{}".format(script_dir, logofp)) as logo:
+    with open("{}/logos/{}".format(script_dir, logofp.lower())) as logo:
         logo = logo.read()
         colored_logo = logo.format(*dist_colors)
     
