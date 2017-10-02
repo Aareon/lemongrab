@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.5
 
 from utils import distro, mem, motherboard, kernel, node, packages, screen, shell, uptime
 import os
