@@ -21,9 +21,8 @@ def cpu():
     else:
         num_cpus = "({})".format(num_cpus)
 
-    cpu_average = 0
     if hz_actual and hz_advertised:
-        cpu_average += ((hz_actual/1000000000) + (hz_advertised/1000000000))/2
+        cpu_average = float("{0:.2f}".format(((hz_actual/1000000000) + (hz_advertised/1000000000))/2))
     else:
         cpu_average = ""
     return new_cpu_brand, cpu_average, num_cpus
