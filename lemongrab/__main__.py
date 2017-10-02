@@ -56,7 +56,7 @@ def main(logofp=distro.distro_txt().lower(), color=True):
     specs.append("{}Packages:{} {}".format(specs_color, reset, packages.packages()))
     specs.append("{}Shell:{} {}".format(specs_color, reset, shell.shell()))
     specs.append("{}HDD:{} {} / {} (Free/Total)".format(specs_color, reset, *mem.hdd()))
-    specs.append("{}CPU:{} {}".format(specs_color, reset, "TBA"))
+    specs.append("{}CPU:{} {} @ {} GHz {}".format(specs_color, reset, *cpu.cpu()))
     specs.append("{}RAM:{} {} / {} (Used/Total)".format(specs_color, reset, *mem.ram()))
     resolution = screen.screen()
     if resolution:
