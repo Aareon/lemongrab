@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.5
 
-from utils import distro, mem, motherboard, kernel, node, packages, screen, shell, uptime
+from lemongrab.utils import distro, mem, motherboard, kernel, node, packages, screen, shell, uptime
 import os
 
 def get_colors(distro):
@@ -65,7 +65,7 @@ def main(logofp=distro.distro_txt(), color=True):
         specs.append("{}Resolution:{} {}".format(specs_color, reset, resolution))
     specs.append("{}Motherboard:{} {} {}".format(specs_color, reset, *motherboard.motherboard()))
 
-    with open("{}/logos/{}.txt".format(script_dir, logofp)) as logo:
+    with open("{}/logos/{}".format(script_dir, logofp)) as logo:
         logo = logo.read()
         colored_logo = logo.format(*dist_colors)
     
