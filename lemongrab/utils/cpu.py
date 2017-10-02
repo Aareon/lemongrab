@@ -6,7 +6,7 @@ def cpu():
     hz_actual = cpus.get("hz_actual_raw", "")[0]
     hz_advertised = cpus.get("hz_advertised_raw", "")[0]
 
-    cpu_brand = cpus.get("brand").strip("(R)\t").split(" ")
+    cpu_brand = cpus.get("brand").rtrip(" @").split(" ")
 
     # Some CPU brands have this weird character that fucks everything up
     while "" in cpu_brand:
