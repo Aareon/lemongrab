@@ -1,2 +1,2 @@
 import __main__
-import .utils
+from . import utils
